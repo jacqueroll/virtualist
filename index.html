@@ -7,7 +7,7 @@
 <meta name="description" content="Virtualist: mangás, manhwas, manhuas, danmeis, light novels, livros, animes, doramas, séries, filmes e jogos, organizados num só lugar.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -89,13 +89,19 @@
   .top-inner{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
   .brand{display:flex;align-items:center;gap:12px;}
   .brand-mark{flex-shrink:0;}
+  .logo-icon-dark{display:none;}
+  [data-theme="dark"] .logo-icon-light{display:none;}
+  [data-theme="dark"] .logo-icon-dark{display:inline-block;}
   .brand h1{
-    font-family:var(--font-body);
-    font-weight:700;
+    font-family:'Space Grotesk',var(--font-body);
+    font-weight:600;
     font-size:32px;
     letter-spacing:-0.01em;
     margin:0;
     color:var(--navy);
+  }
+  .site-footer p{
+    font-family:'Space Grotesk',var(--font-body);
   }
   .brand p{
     margin:4px 0 0;
@@ -362,6 +368,75 @@
   .modal h2{font-size:21px;font-weight:700;color:var(--navy);margin:0 0 18px;}
   .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;border-top:1px solid var(--line);padding-top:16px;}
 
+  /* settings hub */
+  .settings-menu{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+  .settings-card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);
+    padding:14px 16px;cursor:pointer;text-align:left;width:100%;font-family:inherit;
+  }
+  .settings-card:hover{border-color:var(--slate);}
+  .settings-icon{
+    width:40px;height:40px;border-radius:10px;background:var(--surface-alt);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--slate);
+  }
+  .settings-text{flex:1;display:flex;flex-direction:column;gap:2px;}
+  .settings-text strong{color:var(--navy);font-size:14.5px;}
+  .settings-text span{color:var(--muted);font-size:12.5px;}
+  .settings-chevron{color:var(--muted);font-size:20px;transition:transform .15s;flex-shrink:0;}
+  .settings-card.open .settings-chevron{transform:rotate(90deg);}
+  .settings-panel{margin-bottom:24px;}
+
+  /* hero search */
+  .hero-search{
+    background:var(--navy);
+    border-radius:var(--radius-lg);
+    padding:28px 26px;
+    margin-bottom:26px;
+  }
+  .hero-search h2{
+    font-family:'Space Grotesk',var(--font-body);
+    color:var(--ghost);
+    font-size:22px;
+    font-weight:600;
+    margin:0 0 6px;
+  }
+  .hero-search p{
+    color:var(--ghost);
+    opacity:.75;
+    font-size:13px;
+    margin:0 0 16px;
+  }
+  .hero-search input{
+    width:100%;
+    font-size:16px;
+    padding:14px 16px;
+    border-radius:10px;
+    border:1px solid transparent;
+    background:var(--ghost);
+    color:var(--navy);
+  }
+  .hero-search input::placeholder{color:var(--muted);}
+  .hero-search .hint{color:var(--ghost);opacity:.6;margin:14px 0 0;}
+  #heroSearchResults{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+  .hero-result{
+    background:var(--surface);
+    border-radius:10px;
+    overflow:hidden;
+    cursor:pointer;
+    text-align:left;
+    border:1px solid transparent;
+    display:flex;
+    flex-direction:column;
+  }
+  .hero-result:hover{border-color:var(--lilac);}
+  .hero-result img{width:100%;height:130px;object-fit:cover;display:block;background:var(--surface-alt);}
+  .hero-result .hero-result-body{padding:8px 10px;}
+  .hero-result .hero-result-title{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.25;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .hero-result .hero-result-type{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);font-weight:700;margin-top:3px;}
+  .hero-search-status{color:var(--ghost);opacity:.75;font-size:13px;padding:6px 2px;}
+
   /* import/export/account panels */
   .panel{
     background:var(--surface);
@@ -435,11 +510,43 @@
   <div class="top-inner">
     <div class="brand">
       <span class="brand-mark">
-        <svg width="32" height="32" viewBox="0 0 40 40" aria-hidden="true">
-          <circle cx="20" cy="20" r="16" fill="none" stroke="#6A5ACD" stroke-width="1.6" opacity="0.55"/>
-          <circle cx="20" cy="20" r="6.5" fill="#191970"/>
-          <circle cx="33" cy="13" r="3" fill="#836FFF"/>
-          <circle cx="8" cy="28" r="2" fill="#6A5ACD"/>
+        <svg class="logo-icon logo-icon-light" width="32" height="32" viewBox="0 0 200 200" aria-hidden="true">
+          <g stroke="#191970" stroke-width="9" stroke-linecap="square" fill="none">
+            <path d="M30,70 L30,30 L70,30" />
+            <path d="M130,30 L170,30 L170,70" />
+            <path d="M30,130 L30,170 L70,170" />
+            <path d="M170,130 L170,170 L130,170" />
+          </g>
+          <g stroke="#6A5ACD" stroke-width="2.5" fill="none">
+            <line x1="100" y1="100" x2="72" y2="76" />
+            <line x1="100" y1="100" x2="129" y2="79" />
+            <line x1="100" y1="100" x2="83" y2="131" />
+            <line x1="100" y1="100" x2="126" y2="124" />
+          </g>
+          <circle cx="100" cy="100" r="10" fill="#191970" />
+          <circle cx="72" cy="76" r="6" fill="#836FFF" />
+          <circle cx="129" cy="79" r="5" fill="#6A5ACD" />
+          <circle cx="83" cy="131" r="5" fill="#6A5ACD" />
+          <circle cx="126" cy="124" r="6" fill="#836FFF" />
+        </svg>
+        <svg class="logo-icon logo-icon-dark" width="32" height="32" viewBox="0 0 200 200" aria-hidden="true">
+          <g stroke="#F8F8FF" stroke-width="9" stroke-linecap="square" fill="none">
+            <path d="M30,70 L30,30 L70,30" />
+            <path d="M130,30 L170,30 L170,70" />
+            <path d="M30,130 L30,170 L70,170" />
+            <path d="M170,130 L170,170 L130,170" />
+          </g>
+          <g stroke="#6A5ACD" stroke-width="2.5" fill="none">
+            <line x1="100" y1="100" x2="72" y2="76" />
+            <line x1="100" y1="100" x2="129" y2="79" />
+            <line x1="100" y1="100" x2="83" y2="131" />
+            <line x1="100" y1="100" x2="126" y2="124" />
+          </g>
+          <circle cx="100" cy="100" r="10" fill="#F8F8FF" />
+          <circle cx="72" cy="76" r="6" fill="#836FFF" />
+          <circle cx="129" cy="79" r="5" fill="#6A5ACD" />
+          <circle cx="83" cy="131" r="5" fill="#6A5ACD" />
+          <circle cx="126" cy="124" r="6" fill="#836FFF" />
         </svg>
       </span>
       <div>
@@ -469,6 +576,14 @@
 
     <!-- DASHBOARD -->
     <section class="view active" id="view-dashboard">
+      <div class="hero-search">
+        <h2>Buscar e adicionar</h2>
+        <p>Digite um título de mangá, anime ou livro. A capa, o título original, o link e os gêneros vêm sozinhos.</p>
+        <input type="text" id="heroSearchInput" placeholder="Digite um título...">
+        <div id="heroSearchResults"></div>
+        <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para dorama, série, filme e jogo, adicione manualmente pela Biblioteca por enquanto.</p>
+      </div>
+
       <div class="stat-row" id="statRow"></div>
 
       <div class="section-title">Em andamento</div>
@@ -531,8 +646,106 @@
         <h3>Sobre onde seus dados ficam</h3>
         <p id="storageExplainer" style="margin-bottom:0;">Carregando informação de armazenamento...</p>
       </div>
+    </section>
 
-      <div class="panel" style="border-color:var(--black);">
+    <!-- ACCOUNT -->
+    <section class="view" id="view-account">
+      <h2 style="font-size:22px;font-weight:700;color:var(--navy);margin:0 0 4px;">Configurações</h2>
+      <p style="color:var(--muted);font-size:13.5px;margin:0 0 20px;">Gerencie seu perfil, a conexão com a nuvem e seus dados.</p>
+
+      <div class="settings-menu">
+        <button type="button" class="settings-card" data-target="panel-profile">
+          <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+          <span class="settings-text"><strong>Perfil e conta</strong><span>E-mail e senha de acesso.</span></span>
+          <span class="settings-chevron">›</span>
+        </button>
+        <button type="button" class="settings-card" data-target="panel-connection">
+          <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span>
+          <span class="settings-text"><strong>Conexão com Supabase</strong><span>Projeto, login e sincronização na nuvem.</span></span>
+          <span class="settings-chevron">›</span>
+        </button>
+        <button type="button" class="settings-card" id="btnJumpImport">
+          <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></span>
+          <span class="settings-text"><strong>Importar e exportar dados</strong><span>Traga sua lista de outros lugares, ou baixe um backup.</span></span>
+          <span class="settings-chevron">›</span>
+        </button>
+        <button type="button" class="settings-card" data-target="panel-danger">
+          <span class="settings-icon" style="color:var(--black);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L2.5 17a1.8 1.8 0 0 0 1.5 2.7h16a1.8 1.8 0 0 0 1.5-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="16.5" x2="12" y2="16.6"/></svg></span>
+          <span class="settings-text"><strong>Zona de risco</strong><span>Apagar todos os itens do acervo.</span></span>
+          <span class="settings-chevron">›</span>
+        </button>
+      </div>
+
+      <div class="settings-panel panel" id="panel-profile" style="display:none;">
+        <h3>Perfil e conta</h3>
+        <div id="profileLoggedOut">
+          <p>Entre na sua conta em "Conexão com Supabase" para gerenciar e-mail e senha por aqui.</p>
+        </div>
+        <div id="profileLoggedIn" style="display:none;">
+          <p>Conectada como <strong id="profileEmailDisplay"></strong>.</p>
+          <div class="field"><label>Novo e-mail</label><input type="text" id="profileNewEmail" placeholder="novo@email.com"></div>
+          <div class="panel-actions"><button class="btn" id="btnChangeEmail">Trocar e-mail</button></div>
+          <p class="hint">O Supabase envia um e-mail de confirmação para o endereço atual e para o novo antes da troca valer.</p>
+          <div class="field" style="margin-top:18px;"><label>Nova senha</label><input type="password" id="profileNewPassword" placeholder="ao menos 6 caracteres"></div>
+          <div class="panel-actions"><button class="btn" id="btnChangePassword">Trocar senha</button></div>
+          <div class="panel-actions" style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px;">
+            <button class="btn btn-ghost" id="btnSignOutProfile">Sair da conta</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-panel" id="panel-connection" style="display:none;">
+        <div class="panel" id="supabaseSetupPanel">
+          <h3>Conectar ao Supabase</h3>
+          <div id="supabaseConfigSummary" style="display:none;">
+            <p>Conectado ao projeto <strong id="supaUrlSummary"></strong>.</p>
+            <div class="panel-actions">
+              <button class="btn btn-ghost btn-sm" id="btnEditSupabaseConfig">Editar configuração</button>
+            </div>
+          </div>
+          <div id="supabaseConfigForm">
+            <p>Cole a URL do projeto e a chave publicável (publishable key, o nome atual do que antes se chamava anon key). Encontram-se no painel do Supabase, em Project Settings, API Keys. Essa chave é pública por natureza, protegida pelas regras de segurança da tabela (RLS), então não há problema em colar aqui.</p>
+            <div class="field"><label>Project URL</label><input type="text" id="supaUrlInput" placeholder="https://xxxxx.supabase.co"></div>
+            <div class="field"><label>Publishable key</label><input type="text" id="supaKeyInput" placeholder="sb_publishable_..."></div>
+            <div class="panel-actions">
+              <button class="btn btn-primary" id="btnSaveSupabaseConfig">Salvar configuração</button>
+              <button class="btn btn-ghost" id="btnClearSupabaseConfig" style="display:none;">Remover configuração</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="authPanel" style="display:none;">
+          <h3 id="authPanelTitle">Entrar na sua conta</h3>
+          <div id="authLoggedOut">
+            <div class="field"><label>E-mail</label><input type="text" id="authEmail"></div>
+            <div class="field"><label>Senha</label><input type="password" id="authPassword"></div>
+            <div class="panel-actions">
+              <button class="btn btn-primary" id="btnSignIn">Entrar</button>
+              <button class="btn" id="btnSignUp">Criar conta</button>
+            </div>
+            <p class="hint">Depois de criar a conta, confirme o e-mail antes de entrar, ou desative a confirmação em Authentication, Providers, Email, no painel do Supabase, para uso pessoal.</p>
+          </div>
+          <div id="authLoggedIn" style="display:none;">
+            <p>Conectada como <strong id="authUserEmail"></strong>.</p>
+          </div>
+        </div>
+
+        <div class="panel" id="migratePanel" style="display:none;">
+          <h3>Enviar itens locais para a nuvem</h3>
+          <p id="migrateText"></p>
+          <div class="panel-actions">
+            <button class="btn btn-primary" id="btnMigrate">Enviar agora</button>
+            <button class="btn btn-ghost" id="btnSkipMigrate">Agora não</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Sobre onde seus dados ficam</h3>
+          <p id="storageExplainer" style="margin-bottom:0;">Carregando informação de armazenamento...</p>
+        </div>
+      </div>
+
+      <div class="settings-panel panel" id="panel-danger" style="display:none;border-color:var(--black);">
         <h3>Apagar tudo</h3>
         <p>Remove todos os itens do seu acervo de forma permanente. Exporte um backup antes, se quiser manter os dados.</p>
         <div class="panel-actions">
@@ -541,61 +754,31 @@
       </div>
     </section>
 
-    <!-- ACCOUNT -->
-    <section class="view" id="view-account">
-      <div class="panel" id="supabaseSetupPanel">
-        <h3>Conectar ao Supabase</h3>
-        <div id="supabaseConfigSummary" style="display:none;">
-          <p>Conectado ao projeto <strong id="supaUrlSummary"></strong>.</p>
-          <div class="panel-actions">
-            <button class="btn btn-ghost btn-sm" id="btnEditSupabaseConfig">Editar configuração</button>
-          </div>
-        </div>
-        <div id="supabaseConfigForm">
-          <p>Cole a URL do projeto e a chave publicável (publishable key, o nome atual do que antes se chamava anon key). Encontram-se no painel do Supabase, em Project Settings, API Keys. Essa chave é pública por natureza, protegida pelas regras de segurança da tabela (RLS), então não há problema em colar aqui.</p>
-          <div class="field"><label>Project URL</label><input type="text" id="supaUrlInput" placeholder="https://xxxxx.supabase.co"></div>
-          <div class="field"><label>Publishable key</label><input type="text" id="supaKeyInput" placeholder="sb_publishable_..."></div>
-          <div class="panel-actions">
-            <button class="btn btn-primary" id="btnSaveSupabaseConfig">Salvar configuração</button>
-            <button class="btn btn-ghost" id="btnClearSupabaseConfig" style="display:none;">Remover configuração</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" id="authPanel" style="display:none;">
-        <h3 id="authPanelTitle">Entrar na sua conta</h3>
-        <div id="authLoggedOut">
-          <div class="field"><label>E-mail</label><input type="text" id="authEmail"></div>
-          <div class="field"><label>Senha</label><input type="password" id="authPassword"></div>
-          <div class="panel-actions">
-            <button class="btn btn-primary" id="btnSignIn">Entrar</button>
-            <button class="btn" id="btnSignUp">Criar conta</button>
-          </div>
-          <p class="hint">Depois de criar a conta, confirme o e-mail antes de entrar, ou desative a confirmação em Authentication, Providers, Email, no painel do Supabase, para uso pessoal.</p>
-        </div>
-        <div id="authLoggedIn" style="display:none;">
-          <p>Conectada como <strong id="authUserEmail"></strong>.</p>
-          <div class="panel-actions">
-            <button class="btn" id="btnSignOut">Sair</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" id="migratePanel" style="display:none;">
-        <h3>Enviar itens locais para a nuvem</h3>
-        <p id="migrateText"></p>
-        <div class="panel-actions">
-          <button class="btn btn-primary" id="btnMigrate">Enviar agora</button>
-          <button class="btn btn-ghost" id="btnSkipMigrate">Agora não</button>
-        </div>
-      </div>
-    </section>
   </main>
 </div>
 
 <footer class="site-footer">
+  <svg width="28" height="28" viewBox="0 0 200 200" aria-hidden="true" style="margin:0 auto 10px;display:block;">
+    <g stroke="#F8F8FF" stroke-width="9" stroke-linecap="square" fill="none">
+      <path d="M30,70 L30,30 L70,30" />
+      <path d="M130,30 L170,30 L170,70" />
+      <path d="M30,130 L30,170 L70,170" />
+      <path d="M170,130 L170,170 L130,170" />
+    </g>
+    <g stroke="#6A5ACD" stroke-width="2.5" fill="none">
+      <line x1="100" y1="100" x2="72" y2="76" />
+      <line x1="100" y1="100" x2="129" y2="79" />
+      <line x1="100" y1="100" x2="83" y2="131" />
+      <line x1="100" y1="100" x2="126" y2="124" />
+    </g>
+    <circle cx="100" cy="100" r="10" fill="#F8F8FF" />
+    <circle cx="72" cy="76" r="6" fill="#836FFF" />
+    <circle cx="129" cy="79" r="5" fill="#6A5ACD" />
+    <circle cx="83" cy="131" r="5" fill="#6A5ACD" />
+    <circle cx="126" cy="124" r="6" fill="#836FFF" />
+  </svg>
   <div class="rule"></div>
-  <p>Criado por Jacqueline Alves</p>
+  <p>Criado por Jacqueline Alves (Jacqueroll)</p>
 </footer>
 
 <!-- ENTRY MODAL -->
@@ -664,6 +847,11 @@
         </div>
       </div>
 
+      <div class="field">
+        <label>Review</label>
+        <textarea id="f_review" placeholder="O que você achou? Pontos altos, baixos, comparações, o que quiser registrar sobre a obra em si." style="min-height:100px;"></textarea>
+      </div>
+
       <div class="field-row" id="wrap_progress_row">
         <div class="field">
           <label id="label_progressCurrent">Progresso atual</label>
@@ -714,8 +902,8 @@
       </div>
 
       <div class="field">
-        <label>Notas</label>
-        <textarea id="f_notes"></textarea>
+        <label>Notas rápidas</label>
+        <textarea id="f_notes" placeholder="Lembretes práticos: onde parou, de quem pegou emprestado, versão que está lendo..."></textarea>
       </div>
 
       <div class="modal-actions">
@@ -750,7 +938,7 @@ const TYPES = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoo
 const STATUSES = ['Em andamento','Completo','Pausado','Abandonado','Quero conferir','Revisitando'];
 const GENRE_SUGGESTIONS = ['Romance','BL','GL','Fantasia','Ação','Aventura','Comédia','Drama','Slice of Life','Horror','Terror','Suspense','Mistério','Sobrenatural','Histórico','Isekai','Josei','Seinen','Shoujo','Shounen','Ficção Científica','Tragédia','Psicológico','Esportes','Documentário','RPG','Mundo Aberto','Indie','Simulação','Estratégia','Luta','Plataforma','Corrida','Musical','Animação','Policial','Guerra'];
 const PLATFORM_SUGGESTIONS = ['Físico','Kindle','Webtoon','Tapas','MangaUpdates','Bato.to','Digital (compra)','Netflix','Crunchyroll','HBO Max','Disney+','Prime Video','Viki','Kocowa','Cinema','PC','PlayStation','Xbox','Switch','Steam','Outro'];
-const CSV_HEADERS = ['Título','Título original','Capa','Categoria','Status','Autor / Diretor(a) / Estúdio','Artista / Elenco','Gêneros','Nota','Progresso atual','Progresso total','Etapa atual','Etapa total','Data início','Data término','Plataforma','Link','Favorito','Notas','Adicionado em','Atualizado em'];
+const CSV_HEADERS = ['Título','Título original','Capa','Categoria','Status','Autor / Diretor(a) / Estúdio','Artista / Elenco','Gêneros','Nota','Review','Progresso atual','Progresso total','Etapa atual','Etapa total','Data início','Data término','Plataforma','Link','Favorito','Notas','Adicionado em','Atualizado em'];
 const STORAGE_KEY = 'library:entries';
 
 const MEDIA_LABELS = {
@@ -919,6 +1107,7 @@ function mapEntryToRow(entry){
     link: entry.link || null,
     favorite: !!entry.favorite,
     notes: entry.notes || null,
+    review: entry.review || null,
     date_added: entry.dateAdded || todayIso(),
     date_updated: entry.dateUpdated || todayIso()
   };
@@ -945,6 +1134,7 @@ function mapRowToEntry(row){
     link: row.link || '',
     favorite: !!row.favorite,
     notes: row.notes || '',
+    review: row.review || '',
     dateAdded: row.date_added,
     dateUpdated: row.date_updated
   };
@@ -1210,6 +1400,121 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
   }
   btn.disabled = false; btn.textContent = originalLabel;
 });
+
+/* ---------------- hero search (busca e adiciona) ---------------- */
+const ANILIST_GENRE_MAP = {
+  'Action':'Ação','Adventure':'Aventura','Comedy':'Comédia','Drama':'Drama','Fantasy':'Fantasia',
+  'Horror':'Horror','Mystery':'Mistério','Psychological':'Psicológico','Romance':'Romance',
+  'Sci-Fi':'Ficção Científica','Slice of Life':'Slice of Life','Sports':'Esportes',
+  'Supernatural':'Sobrenatural','Thriller':'Suspense','Tragedy':'Tragédia','Ecchi':'Ecchi',
+  'Mecha':'Mecha','Music':'Musical','Historical':'Histórico'
+};
+function mapAniListGenres(list){
+  return (list||[]).map(function(g){ return ANILIST_GENRE_MAP[g] || g; });
+}
+function guessMangaType(format, country){
+  if(format === 'NOVEL') return (country === 'CN') ? 'Danmei (Novel)' : 'Light Novel';
+  if(country === 'KR') return 'Manhwa';
+  if(country === 'CN' || country === 'TW') return 'Manhua';
+  return 'Mangá';
+}
+async function searchAniListCombined(title){
+  const query = 'query($search:String){ anime: Page(page:1, perPage:6){ media(search:$search, type:ANIME){ id title{romaji english native} coverImage{large} genres siteUrl format } } manga: Page(page:1, perPage:6){ media(search:$search, type:MANGA){ id title{romaji english native} coverImage{large} genres siteUrl format countryOfOrigin } } }';
+  const res = await fetch('https://graphql.anilist.co', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body: JSON.stringify({query:query, variables:{search:title}})
+  });
+  if(!res.ok) throw new Error('anilist error');
+  const json = await res.json();
+  const out = [];
+  const animeList = (json && json.data && json.data.anime && json.data.anime.media) || [];
+  animeList.forEach(function(m){
+    out.push({
+      title: m.title.english || m.title.romaji,
+      originalTitle: m.title.native || '',
+      coverUrl: m.coverImage ? m.coverImage.large : '',
+      type: 'Anime',
+      genres: mapAniListGenres(m.genres),
+      link: m.siteUrl || ''
+    });
+  });
+  const mangaList = (json && json.data && json.data.manga && json.data.manga.media) || [];
+  mangaList.forEach(function(m){
+    out.push({
+      title: m.title.english || m.title.romaji,
+      originalTitle: m.title.native || '',
+      coverUrl: m.coverImage ? m.coverImage.large : '',
+      type: guessMangaType(m.format, m.countryOfOrigin),
+      genres: mapAniListGenres(m.genres),
+      link: m.siteUrl || ''
+    });
+  });
+  return out;
+}
+async function searchOpenLibraryList(title){
+  const res = await fetch('https://openlibrary.org/search.json?title='+encodeURIComponent(title)+'&limit=6');
+  if(!res.ok) throw new Error('openlibrary error');
+  const json = await res.json();
+  const docs = (json && json.docs) || [];
+  return docs.filter(function(d){ return d.cover_i; }).map(function(d){
+    return {
+      title: d.title || '',
+      originalTitle: '',
+      coverUrl: 'https://covers.openlibrary.org/b/id/'+d.cover_i+'-L.jpg',
+      type: 'Livro',
+      genres: [],
+      author: (d.author_name && d.author_name[0]) || '',
+      link: d.key ? ('https://openlibrary.org'+d.key) : ''
+    };
+  });
+}
+let heroSearchToken = 0;
+document.getElementById('heroSearchInput').addEventListener('input', debounce(async function(ev){
+  const q = ev.target.value.trim();
+  const resultsBox = document.getElementById('heroSearchResults');
+  const myToken = ++heroSearchToken;
+  if(q.length < 2){ resultsBox.innerHTML = ''; return; }
+  resultsBox.innerHTML = '<div class="hero-search-status">Buscando...</div>';
+  try{
+    const [aniList, books] = await Promise.all([
+      searchAniListCombined(q).catch(function(){ return []; }),
+      searchOpenLibraryList(q).catch(function(){ return []; })
+    ]);
+    if(myToken !== heroSearchToken) return;
+    const combined = aniList.concat(books).filter(function(r){ return r.title; });
+    if(!combined.length){
+      resultsBox.innerHTML = '<div class="hero-search-status">Nenhum resultado encontrado. Você ainda pode adicionar manualmente pela Biblioteca.</div>';
+      return;
+    }
+    resultsBox.innerHTML = combined.map(function(r, idx){
+      const cover = r.coverUrl ? '<img src="'+escapeHtml(r.coverUrl)+'" alt="" loading="lazy" onerror="this.remove()">' : '';
+      return '<button type="button" class="hero-result" data-idx="'+idx+'">'+cover+
+        '<div class="hero-result-body"><div class="hero-result-title">'+escapeHtml(r.title)+'</div>'+
+        '<div class="hero-result-type">'+escapeHtml(r.type)+'</div></div></button>';
+    }).join('');
+    resultsBox.querySelectorAll('.hero-result').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const r = combined[Number(btn.dataset.idx)];
+        openEntryModal(null);
+        document.getElementById('f_title').value = r.title || '';
+        document.getElementById('f_originalTitle').value = r.originalTitle || '';
+        document.getElementById('f_coverUrl').value = r.coverUrl || '';
+        document.getElementById('f_type').value = r.type;
+        applyTypeConfig(r.type);
+        if(r.author) document.getElementById('f_author').value = r.author;
+        document.getElementById('f_link').value = r.link || '';
+        state.currentGenreTags = (r.genres||[]).slice();
+        renderGenreChips();
+        showCoverPreview(r.coverUrl || '');
+        toast('Item pré-preenchido. Confira e salve.');
+      });
+    });
+  }catch(e){
+    if(myToken !== heroSearchToken) return;
+    resultsBox.innerHTML = '<div class="hero-search-status">Não consegui buscar agora. Tente de novo em instantes.</div>';
+  }
+}, 500));
 
 function refreshGenreFilterOptions(){
   const set = new Set();
@@ -1514,6 +1819,7 @@ function openEntryModal(id){
   document.getElementById('f_link').value = e ? e.link||'' : '';
   document.getElementById('f_favorite').checked = e ? !!e.favorite : false;
   document.getElementById('f_notes').value = e ? e.notes||'' : '';
+  document.getElementById('f_review').value = e ? e.review||'' : '';
 
   state.currentGenreTags = e ? (e.genres||[]).slice() : [];
   state.currentRating = e && e.rating!=null ? e.rating : null;
@@ -1557,6 +1863,7 @@ document.getElementById('entryForm').addEventListener('submit', async function(e
     link: document.getElementById('f_link').value.trim(),
     favorite: document.getElementById('f_favorite').checked,
     notes: document.getElementById('f_notes').value.trim(),
+    review: document.getElementById('f_review').value.trim(),
     dateUpdated: todayIso()
   };
 
@@ -1621,7 +1928,7 @@ document.getElementById('btnExportCsv').addEventListener('click', function(){
     rows.push([
       csvEscape(e.title), csvEscape(e.originalTitle), csvEscape(e.coverUrl), csvEscape(e.type), csvEscape(e.status),
       csvEscape(e.author), csvEscape(e.artist), csvEscape((e.genres||[]).join('; ')),
-      csvEscape(e.rating), csvEscape(e.progressCurrent), csvEscape(e.progressTotal),
+      csvEscape(e.rating), csvEscape(e.review), csvEscape(e.progressCurrent), csvEscape(e.progressTotal),
       csvEscape(e.subCurrent), csvEscape(e.subTotal),
       csvEscape(e.startDate), csvEscape(e.endDate), csvEscape(e.platform), csvEscape(e.link),
       csvEscape(e.favorite ? 'Sim' : 'Não'), csvEscape(e.notes), csvEscape(e.dateAdded), csvEscape(e.dateUpdated)
@@ -1720,7 +2027,7 @@ function newEmptyEntry(overrides){
     id: uid(), title:'', originalTitle:'', coverUrl:'', type:'Outro', status:'Quero conferir',
     author:'', artist:'', genres:[], rating:null,
     progressCurrent:null, progressTotal:null, subCurrent:null, subTotal:null,
-    startDate:'', endDate:'', platform:'', link:'', favorite:false, notes:'',
+    startDate:'', endDate:'', platform:'', link:'', favorite:false, notes:'', review:'',
     dateAdded: todayIso(), dateUpdated: todayIso()
   }, overrides);
 }
@@ -1819,7 +2126,8 @@ const FIELD_TARGETS = [
   {value:'endDate', label:'Data término'},
   {value:'platform', label:'Plataforma'},
   {value:'link', label:'Link'},
-  {value:'notes', label:'Notas'}
+  {value:'notes', label:'Notas'},
+  {value:'review', label:'Review'}
 ];
 const HEADER_ALIASES = {
   title:['titulo','título','title','nome','name'],
@@ -1839,7 +2147,8 @@ const HEADER_ALIASES = {
   endDate:['data termino','data término','data fim','end date','date read'],
   platform:['plataforma','platform','fonte','source'],
   link:['link','url'],
-  notes:['notas','notes','comentarios','comentários']
+  notes:['notas','notes','comentarios','comentários'],
+  review:['review','resenha','critica','crítica']
 };
 function guessMapping(fields){
   const map = {};
@@ -1960,6 +2269,8 @@ async function refreshAccountView(){
     clearBtn.style.display = 'none';
     authPanel.style.display = 'none';
     document.getElementById('migratePanel').style.display = 'none';
+    document.getElementById('profileLoggedOut').style.display = '';
+    document.getElementById('profileLoggedIn').style.display = 'none';
     return;
   }
 
@@ -1981,10 +2292,15 @@ async function refreshAccountView(){
     document.getElementById('authLoggedOut').style.display = 'none';
     document.getElementById('authLoggedIn').style.display = '';
     document.getElementById('authUserEmail').textContent = supaUser.email;
+    document.getElementById('profileLoggedOut').style.display = 'none';
+    document.getElementById('profileLoggedIn').style.display = '';
+    document.getElementById('profileEmailDisplay').textContent = supaUser.email;
     await maybeOfferMigration();
   } else {
     document.getElementById('authLoggedOut').style.display = '';
     document.getElementById('authLoggedIn').style.display = 'none';
+    document.getElementById('profileLoggedOut').style.display = '';
+    document.getElementById('profileLoggedIn').style.display = 'none';
     document.getElementById('migratePanel').style.display = 'none';
   }
 }
@@ -2076,13 +2392,46 @@ document.getElementById('btnSignIn').addEventListener('click', async function(){
     toast('Login feito.');
   }catch(e){ toast('Não consegui entrar agora.', true); }
 });
-document.getElementById('btnSignOut').addEventListener('click', async function(){
+document.getElementById('btnSignOutProfile').addEventListener('click', async function(){
   try{ await supabase.auth.signOut(); }catch(e){}
   supaUser = null;
   await Backend.loadAll();
   renderDashboard(); renderLibrary();
   await refreshAccountView();
   toast('Você saiu da conta.');
+});
+document.getElementById('btnChangeEmail').addEventListener('click', async function(){
+  const newEmail = document.getElementById('profileNewEmail').value.trim();
+  if(!newEmail){ toast('Escreva o novo e-mail.', true); return; }
+  try{
+    const res = await supabase.auth.updateUser({ email: newEmail });
+    if(res.error){ toast(res.error.message, true); return; }
+    toast('Confira seu e-mail atual e o novo para confirmar a troca.');
+    document.getElementById('profileNewEmail').value = '';
+  }catch(e){ toast('Não consegui iniciar a troca de e-mail agora.', true); }
+});
+document.getElementById('btnChangePassword').addEventListener('click', async function(){
+  const newPass = document.getElementById('profileNewPassword').value;
+  if(!newPass || newPass.length < 6){ toast('A senha precisa ter ao menos 6 caracteres.', true); return; }
+  try{
+    const res = await supabase.auth.updateUser({ password: newPass });
+    if(res.error){ toast(res.error.message, true); return; }
+    toast('Senha atualizada.');
+    document.getElementById('profileNewPassword').value = '';
+  }catch(e){ toast('Não consegui atualizar a senha agora.', true); }
+});
+
+/* settings hub: cards abrem/fecham os painéis correspondentes */
+document.querySelectorAll('.settings-card[data-target]').forEach(function(card){
+  card.addEventListener('click', function(){
+    const panel = document.getElementById(card.dataset.target);
+    const isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : '';
+    card.classList.toggle('open', !isOpen);
+  });
+});
+document.getElementById('btnJumpImport').addEventListener('click', function(){
+  document.querySelector('nav.tabs button[data-view="importexport"]').click();
 });
 
 /* ---------------- theme ---------------- */
