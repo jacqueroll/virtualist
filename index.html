@@ -895,6 +895,25 @@
         </div>
 
         <div class="panel">
+          <h3>Chave do RAWG</h3>
+          <p>Ativa a busca automática de jogo (capa, gêneros, desenvolvedora, publicadora e se já foi lançado). Crie uma conta gratuita em rawg.io/apidocs e copie a chave de API. Assim como a do TMDB, essa chave fica embutida no app para funcionar para qualquer pessoa.</p>
+          <p class="hint">Essa integração é mais nova, então se a busca de jogo não funcionar depois de configurada, pode ser um bloqueio de CORS do lado do RAWG. Nesse caso, me avise.</p>
+          <div id="rawgKeySummary" style="display:none;">
+            <p>Chave configurada.</p>
+            <div class="panel-actions">
+              <button class="btn btn-ghost btn-sm" id="btnEditRawgKey">Editar chave</button>
+              <button class="btn btn-ghost btn-sm" id="btnClearRawgKey">Remover chave</button>
+            </div>
+          </div>
+          <div id="rawgKeyForm">
+            <div class="field"><label>Chave de API</label><input type="text" id="rawgKeyInput" placeholder="chave do RAWG"></div>
+            <div class="panel-actions">
+              <button class="btn btn-primary" id="btnSaveRawgKey">Salvar chave</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
           <h3>Sobre onde seus dados ficam</h3>
           <p id="storageExplainer" style="margin-bottom:0;">Carregando informação de armazenamento...</p>
         </div>
@@ -964,7 +983,7 @@
         <div id="coverPreviewWrap" style="margin-top:8px;display:none;">
           <img id="coverPreview" src="" alt="" style="max-height:120px;border-radius:8px;border:1px solid var(--line-strong);display:block;">
         </div>
-        <p class="hint" id="coverHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime, livro, filme, série e dorama (as três últimas dependem de uma chave do TMDB configurada nas Configurações). Para jogo, cole o link da capa por enquanto.</p>
+        <p class="hint" id="coverHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime, livro, filme, série, dorama e jogo (algumas categorias dependem de uma chave configurada nas Configurações).</p>
       </div>
 
       <div class="field-row">
@@ -1203,6 +1222,7 @@ let supaConfig = null;
 const DEFAULT_SUPABASE_URL = 'https://awmqrvqqbahbsdsgwxem.supabase.co';
 const DEFAULT_SUPABASE_KEY = 'sb_publishable_1u7xXTIXzBPWJui-rpwzGw_aoZMosg_';
 const DEFAULT_TMDB_KEY = '5dfdb3eeeca2a97ebcbe797ac81dec55';
+const DEFAULT_RAWG_KEY = '';
 
 /* ---------------- helpers ---------------- */
 function uid(){
@@ -1528,12 +1548,14 @@ const COVER_SOURCE = {
   'Mangá':'anilist-manga','Manhwa':'anilist-manga','Manhua':'anilist-manga',
   'Danmei (Novel)':'anilist-manga','Light Novel':'anilist-manga','Webtoon':'anilist-manga',
   'Anime':'anilist-anime','Livro':'openlibrary',
-  'Filme':'tmdb-movie','Série':'tmdb-tv','Dorama':'tmdb-tv'
+  'Filme':'tmdb-movie','Série':'tmdb-tv','Dorama':'tmdb-tv',
+  'Jogo':'rawg'
 };
 function coverSourceAvailable(type){
   const source = COVER_SOURCE[type];
   if(!source) return false;
   if(source === 'tmdb-movie' || source === 'tmdb-tv') return !!tmdbApiKey;
+  if(source === 'rawg') return !!rawgApiKey;
   return true;
 }
 async function fetchCoverAniList(title, isAnimeType){
@@ -1562,6 +1584,11 @@ async function fetchCoverTmdb(title, isTv){
   if(!results.length || !results[0].coverUrl) throw new Error('not found');
   return results[0].coverUrl;
 }
+async function fetchCoverRawg(title){
+  const results = await searchRawgList(title);
+  if(!results.length || !results[0].coverUrl) throw new Error('not found');
+  return results[0].coverUrl;
+}
 function showCoverPreview(url){
   const wrap = document.getElementById('coverPreviewWrap');
   const img = document.getElementById('coverPreview');
@@ -1584,6 +1611,10 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
     toast('Configure a chave do TMDB nas Configurações (modo administrador) para buscar essa categoria.', true);
     return;
   }
+  if(source === 'rawg' && !rawgApiKey){
+    toast('Configure a chave do RAWG nas Configurações (modo administrador) para buscar essa categoria.', true);
+    return;
+  }
   const btn = document.getElementById('btnFetchCover');
   const originalLabel = btn.textContent;
   btn.disabled = true; btn.textContent = 'Buscando...';
@@ -1594,6 +1625,7 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
     else if(source === 'openlibrary') url = await fetchCoverOpenLibrary(title);
     else if(source === 'tmdb-movie') url = await fetchCoverTmdb(title, false);
     else if(source === 'tmdb-tv') url = await fetchCoverTmdb(title, true);
+    else if(source === 'rawg') url = await fetchCoverRawg(title);
     document.getElementById('f_coverUrl').value = url;
     showCoverPreview(url);
     toast('Capa encontrada.');
@@ -1613,7 +1645,10 @@ const GENRE_TRANSLATE_MAP = {
   'Crime':'Policial','Family':'Família','War':'Guerra','War & Politics':'Guerra','Western':'Faroeste',
   'Animation':'Animação','Documentary':'Documentário','Kids':'Infantil','Soap':'Novela',
   'Talk':'Talk Show','News':'Notícias','Reality':'Reality Show',
-  'Action & Adventure':'Ação e Aventura','Sci-Fi & Fantasy':'Ficção Científica e Fantasia'
+  'Action & Adventure':'Ação e Aventura','Sci-Fi & Fantasy':'Ficção Científica e Fantasia',
+  'Indie':'Indie','Shooter':'Tiro','Casual':'Casual','Simulation':'Simulação','Puzzle':'Puzzle',
+  'Arcade':'Arcade','Platformer':'Plataforma','Racing':'Corrida','Massively Multiplayer':'Multiplayer Massivo',
+  'Fighting':'Luta','Board Games':'Jogos de Tabuleiro','Educational':'Educativo','Card':'Cartas'
 };
 const ANILIST_STATUS_MAP = {
   'FINISHED':'Finalizado','RELEASING':'Em lançamento','NOT_YET_RELEASED':'Ainda não lançado',
@@ -1722,9 +1757,15 @@ let tmdbApiKey = null;
 function updateHeroSearchHint(){
   const el = document.getElementById('heroSearchHint');
   if(!el) return;
-  el.textContent = tmdbApiKey
-    ? 'Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime, livro, filme, série e dorama. Para jogo, adicione manualmente pela Biblioteca por enquanto.'
-    : 'Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para jogo, adicione manualmente pela Biblioteca por enquanto.';
+  const base = ['mangá','manhwa','manhua','danmei','light novel','webtoon','anime','livro'];
+  if(tmdbApiKey) base.push('filme','série','dorama');
+  if(rawgApiKey) base.push('jogo');
+  const missing = [];
+  if(!tmdbApiKey) missing.push('filme, série e dorama (TMDB)');
+  if(!rawgApiKey) missing.push('jogo (RAWG)');
+  let text = 'Busca automática disponível para ' + base.join(', ') + '.';
+  if(missing.length) text += ' Configure a chave nas Configurações para liberar: ' + missing.join('; ') + '.';
+  el.textContent = text;
 }
 async function loadTmdbKey(){
   try{ const v = await appStorage.get('virtualist:tmdb-key'); return v || null; }catch(e){ return null; }
@@ -1803,6 +1844,53 @@ async function enrichTmdbResult(result){
   return result;
 }
 
+/* RAWG: jogo */
+let rawgApiKey = null;
+async function loadRawgKey(){
+  try{ const v = await appStorage.get('virtualist:rawg-key'); return v || null; }catch(e){ return null; }
+}
+async function saveRawgKey(key){ await appStorage.set('virtualist:rawg-key', key); }
+async function clearRawgKey(){ try{ await appStorage.remove('virtualist:rawg-key'); }catch(e){} }
+
+async function searchRawgList(title){
+  if(!rawgApiKey) return [];
+  try{
+    const res = await fetch('https://api.rawg.io/api/games?key='+encodeURIComponent(rawgApiKey)+'&search='+encodeURIComponent(title)+'&page_size=8');
+    if(!res.ok) return [];
+    const json = await res.json();
+    const results = (json && json.results) || [];
+    return results.map(function(g){
+      const isFuture = g.tba || (g.released && new Date(g.released) > new Date());
+      return {
+        title: g.name || '',
+        originalTitle: '',
+        synonyms: [],
+        coverUrl: g.background_image || '',
+        type: 'Jogo',
+        genres: (g.genres||[]).map(function(x){ return GENRE_TRANSLATE_MAP[x.name] || x.name; }),
+        link: 'https://rawg.io/games/'+g.slug,
+        author: '',
+        workStatus: isFuture ? 'Ainda não lançado' : 'Lançado',
+        rawgId: g.id
+      };
+    });
+  }catch(e){ return []; }
+}
+async function enrichRawgResult(result){
+  if(!rawgApiKey || !result.rawgId) return result;
+  try{
+    const res = await fetch('https://api.rawg.io/api/games/'+result.rawgId+'?key='+encodeURIComponent(rawgApiKey));
+    if(res.ok){
+      const data = await res.json();
+      const dev = data.developers && data.developers.length ? data.developers.map(function(d){ return d.name; }).join(', ') : '';
+      const pub = data.publishers && data.publishers.length ? data.publishers.map(function(p){ return p.name; }).join(', ') : '';
+      if(dev) result.author = dev;
+      if(pub) result.artist = pub;
+    }
+  }catch(e){}
+  return result;
+}
+
 let heroSearchToken = 0;
 async function runHeroSearch(){
   const q = document.getElementById('heroSearchInput').value.trim();
@@ -1816,10 +1904,12 @@ async function runHeroSearch(){
   const wantsAniList = !typeFilter || typeFilter === 'Anime' || mangaTypes.indexOf(typeFilter) !== -1;
   const wantsBooks = !typeFilter || typeFilter === 'Livro';
   const wantsTmdb = !!tmdbApiKey && (!typeFilter || typeFilter === 'Filme' || tvTypes.indexOf(typeFilter) !== -1);
-  if(typeFilter && !wantsAniList && !wantsBooks && !wantsTmdb){
+  const wantsRawg = !!rawgApiKey && (!typeFilter || typeFilter === 'Jogo');
+  if(typeFilter && !wantsAniList && !wantsBooks && !wantsTmdb && !wantsRawg){
     const needsTmdb = typeFilter === 'Filme' || tvTypes.indexOf(typeFilter) !== -1;
-    resultsBox.innerHTML = needsTmdb
-      ? '<div class="hero-search-status">Busca automática para essa categoria depende de uma chave do TMDB, configurada nas Configurações pelo modo administrador. Adicione manualmente pela Biblioteca por enquanto.</div>'
+    const needsRawg = typeFilter === 'Jogo';
+    resultsBox.innerHTML = (needsTmdb || needsRawg)
+      ? '<div class="hero-search-status">Busca automática para essa categoria depende de uma chave do '+(needsTmdb?'TMDB':'RAWG')+', configurada nas Configurações pelo modo administrador. Adicione manualmente pela Biblioteca por enquanto.</div>'
       : '<div class="hero-search-status">Busca automática ainda não disponível para essa categoria. Adicione manualmente pela Biblioteca.</div>';
     return;
   }
@@ -1830,13 +1920,14 @@ async function runHeroSearch(){
 
   resultsBox.innerHTML = '<div class="hero-search-status">Buscando...</div>';
   try{
-    const [aniList, books, tmdb] = await Promise.all([
+    const [aniList, books, tmdb, rawg] = await Promise.all([
       wantsAniList ? searchAniListCombined(q, onlyAnime, onlyManga).catch(function(){ return []; }) : Promise.resolve([]),
       wantsBooks ? searchOpenLibraryList(q).catch(function(){ return []; }) : Promise.resolve([]),
-      wantsTmdb ? searchTmdbCombined(q, onlyMovie, onlyTv).catch(function(){ return []; }) : Promise.resolve([])
+      wantsTmdb ? searchTmdbCombined(q, onlyMovie, onlyTv).catch(function(){ return []; }) : Promise.resolve([]),
+      wantsRawg ? searchRawgList(q).catch(function(){ return []; }) : Promise.resolve([])
     ]);
     if(myToken !== heroSearchToken) return;
-    let combined = aniList.concat(books).concat(tmdb).filter(function(r){ return r.title; });
+    let combined = aniList.concat(books).concat(tmdb).concat(rawg).filter(function(r){ return r.title; });
     if(typeFilter) combined = combined.filter(function(r){ return r.type === typeFilter; });
     if(!combined.length){
       resultsBox.innerHTML = '<div class="hero-search-status">Nenhum resultado encontrado. Você ainda pode adicionar manualmente pela Biblioteca.</div>';
@@ -1858,6 +1949,7 @@ async function runHeroSearch(){
       btn.addEventListener('click', async function(){
         let r = combined[Number(btn.dataset.idx)];
         if(r.tmdbId){ btn.style.opacity='.6'; r = await enrichTmdbResult(r); btn.style.opacity=''; }
+        else if(r.rawgId){ btn.style.opacity='.6'; r = await enrichRawgResult(r); btn.style.opacity=''; }
         openEntryModal(null);
         document.getElementById('f_title').value = r.title || '';
         document.getElementById('f_originalTitle').value = r.originalTitle || '';
@@ -2626,6 +2718,7 @@ async function checkSupabaseSession(){
 
 let configFormExpanded = false;
 let tmdbFormExpanded = false;
+let rawgFormExpanded = false;
 let adminModeUnlocked = false;
 
 function refreshTmdbKeyView(){
@@ -2640,6 +2733,18 @@ function refreshTmdbKeyView(){
     document.getElementById('tmdbKeyInput').value = tmdbApiKey || '';
   }
 }
+function refreshRawgKeyView(){
+  const summary = document.getElementById('rawgKeySummary');
+  const form = document.getElementById('rawgKeyForm');
+  if(rawgApiKey && !rawgFormExpanded){
+    summary.style.display = '';
+    form.style.display = 'none';
+  } else {
+    summary.style.display = 'none';
+    form.style.display = '';
+    document.getElementById('rawgKeyInput').value = rawgApiKey || '';
+  }
+}
 
 async function refreshAccountView(){
   const summary = document.getElementById('supabaseConfigSummary');
@@ -2650,6 +2755,7 @@ async function refreshAccountView(){
   updateStorageExplainer();
   updateAccountBadge();
   refreshTmdbKeyView();
+  refreshRawgKeyView();
 
   if(!supaConfig){
     // primeira configuração ainda não feita: mostra só a conexão técnica
@@ -2839,6 +2945,30 @@ document.getElementById('btnClearTmdbKey').addEventListener('click', function(){
     toast('Chave removida.');
   });
 });
+document.getElementById('btnSaveRawgKey').addEventListener('click', async function(){
+  const key = document.getElementById('rawgKeyInput').value.trim();
+  if(!key){ toast('Cole a chave do RAWG para continuar.', true); return; }
+  rawgApiKey = key;
+  await saveRawgKey(key);
+  rawgFormExpanded = false;
+  refreshRawgKeyView();
+  updateHeroSearchHint();
+  toast('Chave do RAWG salva.');
+});
+document.getElementById('btnEditRawgKey').addEventListener('click', function(){
+  rawgFormExpanded = true;
+  refreshRawgKeyView();
+});
+document.getElementById('btnClearRawgKey').addEventListener('click', function(){
+  confirmAction('Remover chave do RAWG', 'A busca automática de jogo para de funcionar até você configurar outra chave. Continuar?', async function(){
+    await clearRawgKey();
+    rawgApiKey = null;
+    rawgFormExpanded = false;
+    refreshRawgKeyView();
+    updateHeroSearchHint();
+    toast('Chave removida.');
+  });
+});
 
 function unlockAdminMode(){
   adminModeUnlocked = true;
@@ -2998,6 +3128,11 @@ async function init(){
   if(!tmdbApiKey && DEFAULT_TMDB_KEY){
     tmdbApiKey = DEFAULT_TMDB_KEY;
     await saveTmdbKey(tmdbApiKey);
+  }
+  rawgApiKey = await loadRawgKey();
+  if(!rawgApiKey && DEFAULT_RAWG_KEY){
+    rawgApiKey = DEFAULT_RAWG_KEY;
+    await saveRawgKey(rawgApiKey);
   }
   updateHeroSearchHint();
   applyTypeConfig(TYPES[0]);
