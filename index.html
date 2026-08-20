@@ -584,6 +584,13 @@
   }
   footer.site-footer .rule{width:48px;height:2px;background:var(--lilac);margin:0 auto 14px;}
   footer.site-footer p{margin:0;font-size:13px;letter-spacing:.03em;}
+  footer.site-footer .footer-note{margin-top:8px;opacity:.65;font-size:11.5px;letter-spacing:.02em;}
+  .footer-feedback-btn{
+    margin-top:14px;background:none;border:1px solid rgba(248,248,255,.35);
+    color:var(--ghost);font-size:12px;font-weight:600;padding:7px 16px;
+    border-radius:999px;cursor:pointer;
+  }
+  .footer-feedback-btn:hover{background:rgba(248,248,255,.1);border-color:var(--ghost);}
 
   @media(max-width:640px){
     .field-row{grid-template-columns:1fr;}
@@ -953,6 +960,8 @@
   </svg>
   <div class="rule"></div>
   <p>Criado por Jacqueline Alves (Jacqueroll)</p>
+  <p class="footer-note">Esta plataforma está em desenvolvimento.</p>
+  <button type="button" class="footer-feedback-btn" id="btnOpenFeedback">Enviar sugestão, dúvida ou problema</button>
 </footer>
 
 <!-- ENTRY MODAL -->
@@ -1101,6 +1110,44 @@
       <button class="btn btn-ghost" id="confirmCancelBtn">Cancelar</button>
       <button class="btn btn-danger" id="confirmOkBtn">Confirmar</button>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="feedbackOverlay">
+  <div class="modal modal-small">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;">
+      <h2 style="margin:0;">Fale com a gente</h2>
+      <button type="button" class="modal-close-btn" id="btnCloseFeedback" aria-label="Fechar">×</button>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 18px;">O Virtualist ainda está em desenvolvimento. Sugestões, dúvidas e problemas ajudam bastante.</p>
+    <form id="feedbackForm" autocomplete="on">
+      <input type="text" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="off">
+      <input type="password" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
+      <div class="field">
+        <label>Tipo</label>
+        <select id="feedbackTipo">
+          <option value="Sugestão">Sugestão</option>
+          <option value="Dúvida">Dúvida</option>
+          <option value="Problema">Problema</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Nome (opcional)</label>
+        <input type="text" id="feedbackNome" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>E-mail (opcional, para resposta)</label>
+        <input type="email" id="feedbackEmail" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Mensagem</label>
+        <textarea id="feedbackMensagem" required style="min-height:100px;"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="btnCancelFeedback">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btnSubmitFeedback">Enviar</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -1431,19 +1478,31 @@ const Backend = {
     if(remoteMode()){
       setSaveStatus('saving','enviando');
       const rows = entries.map(function(e){ const r = mapEntryToRow(e); delete r.id; return r; });
-      try{
-        if(rows.length){
-          const res = await supabase.from('virtualist_entries').insert(rows);
+      const CHUNK_SIZE = 25;
+      let okCount = 0;
+      let firstError = null;
+      for(let i=0; i<rows.length; i+=CHUNK_SIZE){
+        const chunk = rows.slice(i, i+CHUNK_SIZE);
+        try{
+          const res = await supabase.from('virtualist_entries').insert(chunk);
           if(res.error) throw res.error;
+          okCount += chunk.length;
+        }catch(e){
+          console.error('bulkInsert chunk failed', i, e);
+          if(!firstError) firstError = e;
         }
-        await Backend.loadAll();
-        setSaveStatus('saved','sincronizado');
-      }catch(e){
-        console.error(e); toast('Não consegui enviar os itens para a nuvem.', true); setSaveStatus('error','erro ao enviar');
       }
-      return;
+      await Backend.loadAll();
+      if(firstError){
+        setSaveStatus('error','erro ao enviar');
+        toast('Só consegui enviar '+okCount+' de '+rows.length+' itens para a nuvem. Os que falharam não foram salvos, exporte um backup em JSON para não perdê-los.', true);
+        return false;
+      }
+      setSaveStatus('saved','sincronizado');
+      return true;
     }
-    return persistLocalAll();
+    await persistLocalAll();
+    return true;
   },
   async replaceAll(entries){
     if(remoteMode()){
@@ -1451,23 +1510,20 @@ const Backend = {
       try{
         const delRes = await supabase.from('virtualist_entries').delete().not('id','is',null);
         if(delRes.error) throw delRes.error;
-        const rows = entries.map(function(e){ const r = mapEntryToRow(e); delete r.id; return r; });
-        if(rows.length){
-          const res = await supabase.from('virtualist_entries').insert(rows);
-          if(res.error) throw res.error;
-        }
-        await Backend.loadAll();
-        setSaveStatus('saved','sincronizado');
       }catch(e){
-        console.error(e); toast('Não consegui substituir os dados na nuvem.', true); setSaveStatus('error','erro');
+        console.error(e); toast('Não consegui limpar os dados antigos na nuvem.', true); setSaveStatus('error','erro');
+        return false;
       }
-      return;
+      const ok = await Backend.bulkInsert(entries);
+      return ok;
     }
-    return persistLocalAll();
+    await persistLocalAll();
+    return true;
   },
   async clearAll(){
     if(remoteMode()) return Backend.replaceAll([]);
-    return persistLocalAll();
+    await persistLocalAll();
+    return true;
   }
 };
 
@@ -2499,15 +2555,15 @@ function showImportPreview(entries, sourceLabel){
   document.getElementById('btnImportMerge').addEventListener('click', async function(){
     const incoming = state.pendingImport;
     state.entries = state.entries.concat(incoming);
-    await Backend.bulkInsert(incoming);
-    finishImport();
+    const ok = await Backend.bulkInsert(incoming);
+    finishImport(ok, incoming);
   });
   document.getElementById('btnImportReplace').addEventListener('click', function(){
     confirmAction('Substituir tudo', 'Isso apaga os '+state.entries.length+' itens atuais e coloca os '+state.pendingImport.length+' itens importados no lugar. Considere baixar um backup antes. Continuar?', async function(){
       const incoming = state.pendingImport;
       state.entries = incoming;
-      await Backend.replaceAll(incoming);
-      finishImport();
+      const ok = await Backend.replaceAll(incoming);
+      finishImport(ok, incoming);
     });
   });
   document.getElementById('btnImportCancel').addEventListener('click', function(){
@@ -2515,11 +2571,62 @@ function showImportPreview(entries, sourceLabel){
     work.innerHTML = '';
   });
 }
-function finishImport(){
+function finishImport(ok, importedEntries){
   renderDashboard();
   renderLibrary();
   document.getElementById('importWork').innerHTML = '';
-  toast('Importação concluída.');
+  if(ok === false){
+    toast('Importação com problemas: nem tudo foi salvo na nuvem. Veja o aviso acima e exporte um backup antes de recarregar a página.', true);
+  } else {
+    toast('Importação concluída.');
+    offerCoverEnrichment(importedEntries);
+  }
+}
+
+function offerCoverEnrichment(importedEntries){
+  const candidates = (importedEntries||[]).filter(function(e){
+    return !e.coverUrl && COVER_SOURCE[e.type] === 'anilist-manga';
+  });
+  if(!candidates.length) return;
+  const work = document.getElementById('importWork');
+  work.innerHTML =
+    '<div class="panel" style="margin-top:14px;background:var(--surface-alt);">' +
+      '<h3>Buscar capas automaticamente</h3>' +
+      '<p>'+candidates.length+' item(ns) importados sem capa. Posso tentar encontrar pela AniList, usando o título de cada um. Pode levar um minuto.</p>' +
+      '<div class="panel-actions">' +
+        '<button class="btn btn-primary" id="btnRunCoverEnrichment">Buscar capas agora</button>' +
+        '<button class="btn btn-ghost" id="btnSkipCoverEnrichment">Agora não</button>' +
+      '</div>' +
+      '<p class="hint" id="enrichmentProgress"></p>' +
+    '</div>';
+  document.getElementById('btnSkipCoverEnrichment').addEventListener('click', function(){ work.innerHTML = ''; });
+  document.getElementById('btnRunCoverEnrichment').addEventListener('click', async function(){
+    const btn = document.getElementById('btnRunCoverEnrichment');
+    const progress = document.getElementById('enrichmentProgress');
+    btn.disabled = true;
+    let done = 0, found = 0;
+    for(const entry of candidates){
+      progress.textContent = 'Buscando ' + (done+1) + ' de ' + candidates.length + '...';
+      try{
+        const isAnime = entry.type === 'Anime';
+        const url = await fetchCoverAniList(entry.title, isAnime);
+        if(url){
+          const live = state.entries.find(function(x){ return x.title === entry.title && x.type === entry.type && !x.coverUrl; });
+          if(live){
+            live.coverUrl = url;
+            live.dateUpdated = todayIso();
+            await Backend.update(live);
+            found++;
+          }
+        }
+      }catch(e){}
+      done++;
+      await new Promise(function(r){ setTimeout(r, 300); });
+    }
+    progress.textContent = 'Pronto: '+found+' de '+candidates.length+' capas encontradas.';
+    renderLibrary();
+    btn.textContent = 'Concluído';
+  });
 }
 
 function newEmptyEntry(overrides){
@@ -3012,6 +3119,54 @@ document.getElementById('btnClearRawgKey').addEventListener('click', function(){
     updateHeroSearchHint();
     toast('Chave removida.');
   });
+});
+
+/* ---------------- feedback (Formspree) ---------------- */
+function openFeedbackModal(){
+  document.getElementById('feedbackOverlay').classList.add('show');
+}
+function closeFeedbackModal(){
+  document.getElementById('feedbackOverlay').classList.remove('show');
+}
+document.getElementById('btnOpenFeedback').addEventListener('click', openFeedbackModal);
+document.getElementById('btnCancelFeedback').addEventListener('click', closeFeedbackModal);
+document.getElementById('btnCloseFeedback').addEventListener('click', closeFeedbackModal);
+document.getElementById('feedbackOverlay').addEventListener('click', function(ev){
+  if(ev.target === this) closeFeedbackModal();
+});
+document.getElementById('feedbackForm').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  const tipo = document.getElementById('feedbackTipo').value;
+  const nome = document.getElementById('feedbackNome').value.trim();
+  const email = document.getElementById('feedbackEmail').value.trim();
+  const mensagem = document.getElementById('feedbackMensagem').value.trim();
+  if(!mensagem){ toast('Escreva sua mensagem antes de enviar.', true); return; }
+  const btn = document.getElementById('btnSubmitFeedback');
+  const originalLabel = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try{
+    const res = await fetch('https://formspree.io/f/xnpawjbn', {
+      method: 'POST',
+      headers: {'Accept':'application/json','Content-Type':'application/json'},
+      body: JSON.stringify({
+        _subject: 'Virtualist: ' + tipo,
+        tipo: tipo,
+        name: nome || '(não informado)',
+        email: email || '(não informado)',
+        message: mensagem
+      })
+    });
+    if(res.ok){
+      toast('Mensagem enviada. Obrigada pelo retorno!');
+      document.getElementById('feedbackForm').reset();
+      closeFeedbackModal();
+    } else {
+      toast('Não consegui enviar agora. Tente de novo em instantes.', true);
+    }
+  }catch(e){
+    toast('Não consegui enviar agora. Tente de novo em instantes.', true);
+  }
+  btn.disabled = false; btn.textContent = originalLabel;
 });
 
 function unlockAdminMode(){
