@@ -863,7 +863,8 @@
 
         <div class="panel">
           <h3>Chave do TMDB</h3>
-          <p>Ativa a busca automática de filme, série e dorama (capa, título original, gêneros, autor/diretor e status da obra). Crie uma conta gratuita em themoviedb.org, vá em Configurações, API, e copie a "API Key (v3 auth)". Essa chave não é tão pública quanto a do Supabase, então evite compartilhar essa tela.</p>
+          <p>Ativa a busca automática de filme, série e dorama (capa, título original, gêneros, autor/diretor e status da obra) para qualquer pessoa que usar o Virtualist, já que essa chave fica embutida no app, do mesmo jeito que a conexão do Supabase. Se precisar trocar, crie uma conta gratuita em themoviedb.org, vá em Configurações, API, e copie a "Chave da API" (não o Token de Leitura da API, que é outro tipo de credencial).</p>
+          <p class="hint">Diferente da chave do Supabase, essa não é protegida por regras de segurança. Se for compartilhada além do necessário, alguém pode consumir sua cota gratuita do TMDB, o que dá pra resolver gerando uma chave nova no próprio site deles.</p>
           <div id="tmdbKeySummary" style="display:none;">
             <p>Chave configurada.</p>
             <div class="panel-actions">
@@ -1184,6 +1185,7 @@ let supaUser = null;
 let supaConfig = null;
 const DEFAULT_SUPABASE_URL = 'https://awmqrvqqbahbsdsgwxem.supabase.co';
 const DEFAULT_SUPABASE_KEY = 'sb_publishable_1u7xXTIXzBPWJui-rpwzGw_aoZMosg_';
+const DEFAULT_TMDB_KEY = '5dfdb3eeeca2a97ebcbe797ac81dec55';
 
 /* ---------------- helpers ---------------- */
 function uid(){
@@ -2972,6 +2974,10 @@ async function init(){
   applyTheme(currentTheme);
   populateStaticOptions();
   tmdbApiKey = await loadTmdbKey();
+  if(!tmdbApiKey && DEFAULT_TMDB_KEY){
+    tmdbApiKey = DEFAULT_TMDB_KEY;
+    await saveTmdbKey(tmdbApiKey);
+  }
   updateHeroSearchHint();
   applyTypeConfig(TYPES[0]);
   supaConfig = await loadSupabaseConfig();
