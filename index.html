@@ -243,6 +243,12 @@
   .btn-ghost{background:none;border-color:transparent;color:var(--muted);}
   .btn-ghost:hover{color:var(--navy);}
   .btn-sm{padding:5px 10px;font-size:12px;}
+  .icon-btn{
+    width:34px;height:34px;border-radius:8px;border:1px solid var(--line-strong);
+    background:var(--white);color:var(--navy);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;
+  }
+  .icon-btn:hover{border-color:var(--slate);color:var(--slate);}
 
   .result-count{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
 
@@ -260,13 +266,18 @@
     flex-direction:column;
     gap:8px;
     box-shadow:var(--shadow);
+    overflow:hidden;
+    min-width:0;
   }
   .entry-cover{
     display:block;
     width:calc(100% + 32px);
+    max-width:calc(100% + 32px);
     margin:-16px -16px 10px -16px;
     height:170px;
+    max-height:170px;
     object-fit:cover;
+    object-position:center top;
     border-radius:var(--radius-lg) var(--radius-lg) 0 0;
     background:var(--surface-alt);
   }
@@ -418,7 +429,18 @@
   }
   .hero-search input::placeholder{color:var(--muted);}
   .hero-search .hint{color:var(--ghost);opacity:.6;margin:14px 0 0;}
-  #heroSearchResults{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+  .hero-search-row{display:flex;gap:8px;}
+  .hero-search-row input{flex:1;}
+  .hero-search-row select{
+    padding:0 14px;
+    border-radius:10px;
+    border:1px solid transparent;
+    background:var(--ghost);
+    color:var(--navy);
+    font-size:13.5px;
+    max-width:180px;
+  }
+  #heroSearchResults{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
   .hero-result{
     background:var(--surface);
     border-radius:10px;
@@ -428,13 +450,20 @@
     border:1px solid transparent;
     display:flex;
     flex-direction:column;
+    min-width:0;
+    padding:0;
   }
   .hero-result:hover{border-color:var(--lilac);}
-  .hero-result img{width:100%;height:130px;object-fit:cover;display:block;background:var(--surface-alt);}
+  .hero-result img{width:100%;max-width:100%;height:130px;max-height:130px;object-fit:cover;object-position:center top;display:block;background:var(--surface-alt);}
   .hero-result .hero-result-body{padding:8px 10px;}
   .hero-result .hero-result-title{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.25;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .hero-result .hero-result-type{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);font-weight:700;margin-top:3px;}
+  .hero-result .hero-result-meta{font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.4;}
+  .hero-result .hero-result-badge{
+    display:inline-block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    padding:2px 6px;border-radius:5px;margin-top:5px;background:var(--surface-alt);color:var(--slate);
+  }
   .hero-search-status{color:var(--ghost);opacity:.75;font-size:13px;padding:6px 2px;}
 
   /* import/export/account panels */
@@ -509,7 +538,7 @@
 <header class="top">
   <div class="top-inner">
     <div class="brand">
-      <span class="brand-mark">
+      <span class="brand-mark" id="brandMarkClickTarget" style="cursor:default;">
         <svg class="logo-icon logo-icon-light" width="32" height="32" viewBox="0 0 200 200" aria-hidden="true">
           <g stroke="#191970" stroke-width="9" stroke-linecap="square" fill="none">
             <path d="M30,70 L30,30 L70,30" />
@@ -557,6 +586,9 @@
     <div style="display:flex;align-items:center;gap:14px;">
       <span class="status-chip" id="accountBadge" style="display:none;"></span>
       <button class="btn btn-ghost btn-sm" id="themeToggle" type="button">Modo escuro</button>
+      <button class="icon-btn" id="btnOpenSettings" type="button" title="Configurações" aria-label="Configurações">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
       <div class="save-status" id="saveStatus"><span class="save-dot"></span><span id="saveStatusText">carregando</span></div>
     </div>
   </div>
@@ -565,7 +597,6 @@
       <button data-view="dashboard" class="active">Painel</button>
       <button data-view="library">Biblioteca</button>
       <button data-view="importexport">Importar / Exportar</button>
-      <button data-view="account">Conta</button>
     </nav>
   </div>
 </header>
@@ -578,8 +609,11 @@
     <section class="view active" id="view-dashboard">
       <div class="hero-search">
         <h2>Buscar e adicionar</h2>
-        <p>Digite um título de mangá, anime ou livro. A capa, o título original, o link e os gêneros vêm sozinhos.</p>
-        <input type="text" id="heroSearchInput" placeholder="Digite um título...">
+        <p>Digite um título de mangá, anime ou livro. A capa, o título original, o link, os gêneros, o status da obra e autor/artista vêm sozinhos.</p>
+        <div class="hero-search-row">
+          <input type="search" id="heroSearchInput" placeholder="Digite um título..." autocomplete="off" name="virtualist-hero-search" data-lpignore="true" data-1p-ignore>
+          <select id="heroSearchTypeFilter"></select>
+        </div>
         <div id="heroSearchResults"></div>
         <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para dorama, série, filme e jogo, adicione manualmente pela Biblioteca por enquanto.</p>
       </div>
@@ -596,7 +630,7 @@
     <!-- LIBRARY -->
     <section class="view" id="view-library">
       <div class="toolbar">
-        <input type="text" id="searchInput" placeholder="Buscar por título, autor(a) ou diretor(a)">
+        <input type="search" id="searchInput" placeholder="Buscar por título, autor(a) ou diretor(a)" autocomplete="off" name="virtualist-library-search" data-lpignore="true" data-1p-ignore>
         <select id="filterType"><option value="">Todas as categorias</option></select>
         <select id="filterStatus"><option value="">Todos os status</option></select>
         <select id="filterGenre"><option value="">Todos os gêneros</option></select>
@@ -654,14 +688,14 @@
       <p style="color:var(--muted);font-size:13.5px;margin:0 0 20px;">Gerencie seu perfil, a conexão com a nuvem e seus dados.</p>
 
       <div class="settings-menu">
-        <button type="button" class="settings-card" data-target="panel-profile">
+        <button type="button" class="settings-card" id="cardProfile" data-target="panel-profile">
           <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
           <span class="settings-text"><strong>Perfil e conta</strong><span>E-mail e senha de acesso.</span></span>
           <span class="settings-chevron">›</span>
         </button>
-        <button type="button" class="settings-card" data-target="panel-connection">
+        <button type="button" class="settings-card" id="cardConnection" data-target="panel-connection" style="display:none;">
           <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span>
-          <span class="settings-text"><strong>Conexão com Supabase</strong><span>Projeto, login e sincronização na nuvem.</span></span>
+          <span class="settings-text"><strong>Conexão com Supabase</strong><span>Projeto, login e sincronização na nuvem. Modo administrador.</span></span>
           <span class="settings-chevron">›</span>
         </button>
         <button type="button" class="settings-card" id="btnJumpImport">
@@ -679,7 +713,13 @@
       <div class="settings-panel panel" id="panel-profile" style="display:none;">
         <h3>Perfil e conta</h3>
         <div id="profileLoggedOut">
-          <p>Entre na sua conta em "Conexão com Supabase" para gerenciar e-mail e senha por aqui.</p>
+          <div class="field"><label>E-mail</label><input type="email" id="authEmail" autocomplete="username"></div>
+          <div class="field"><label>Senha</label><input type="password" id="authPassword" autocomplete="current-password"></div>
+          <div class="panel-actions">
+            <button class="btn btn-primary" id="btnSignIn">Entrar</button>
+            <button class="btn" id="btnSignUp">Criar conta</button>
+          </div>
+          <p class="hint">Depois de criar a conta, confirme o e-mail antes de entrar.</p>
         </div>
         <div id="profileLoggedIn" style="display:none;">
           <p>Conectada como <strong id="profileEmailDisplay"></strong>.</p>
@@ -711,22 +751,6 @@
               <button class="btn btn-primary" id="btnSaveSupabaseConfig">Salvar configuração</button>
               <button class="btn btn-ghost" id="btnClearSupabaseConfig" style="display:none;">Remover configuração</button>
             </div>
-          </div>
-        </div>
-
-        <div class="panel" id="authPanel" style="display:none;">
-          <h3 id="authPanelTitle">Entrar na sua conta</h3>
-          <div id="authLoggedOut">
-            <div class="field"><label>E-mail</label><input type="text" id="authEmail"></div>
-            <div class="field"><label>Senha</label><input type="password" id="authPassword"></div>
-            <div class="panel-actions">
-              <button class="btn btn-primary" id="btnSignIn">Entrar</button>
-              <button class="btn" id="btnSignUp">Criar conta</button>
-            </div>
-            <p class="hint">Depois de criar a conta, confirme o e-mail antes de entrar, ou desative a confirmação em Authentication, Providers, Email, no painel do Supabase, para uso pessoal.</p>
-          </div>
-          <div id="authLoggedIn" style="display:none;">
-            <p>Conectada como <strong id="authUserEmail"></strong>.</p>
           </div>
         </div>
 
@@ -935,7 +959,23 @@
 
 /* ---------------- constants ---------------- */
 const TYPES = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoon','Livro','Anime','Dorama','Série','Filme','Jogo','Outro'];
-const STATUSES = ['Em andamento','Completo','Pausado','Abandonado','Quero conferir','Revisitando'];
+const STATUS_SETS = {
+  reading: ['Lendo','Completo','Pausado','Abandonado','Quero ler','Relendo'],
+  watching: ['Assistindo','Completo','Pausado','Abandonado','Quero assistir','Reassistindo'],
+  playing: ['Jogando','Completo','Pausado','Abandonado','Quero jogar','Rejogando'],
+  generic: ['Em andamento','Completo','Pausado','Abandonado','Quero conferir','Revisitando']
+};
+const TYPE_STATUS_GROUP = {
+  'Mangá':'reading','Manhwa':'reading','Manhua':'reading','Danmei (Novel)':'reading','Light Novel':'reading','Webtoon':'reading','Livro':'reading',
+  'Anime':'watching','Dorama':'watching','Série':'watching','Filme':'watching',
+  'Jogo':'playing',
+  'Outro':'generic'
+};
+const ONGOING_STATUSES = ['Lendo','Assistindo','Jogando','Em andamento'];
+const PLAN_STATUSES = ['Quero ler','Quero assistir','Quero jogar','Quero conferir'];
+const REVISIT_STATUSES = ['Relendo','Reassistindo','Rejogando','Revisitando'];
+const ALL_STATUSES = Array.from(new Set([].concat(STATUS_SETS.reading, STATUS_SETS.watching, STATUS_SETS.playing, STATUS_SETS.generic)));
+function statusGroupFor(type){ return STATUS_SETS[TYPE_STATUS_GROUP[type]] || STATUS_SETS.generic; }
 const GENRE_SUGGESTIONS = ['Romance','BL','GL','Fantasia','Ação','Aventura','Comédia','Drama','Slice of Life','Horror','Terror','Suspense','Mistério','Sobrenatural','Histórico','Isekai','Josei','Seinen','Shoujo','Shounen','Ficção Científica','Tragédia','Psicológico','Esportes','Documentário','RPG','Mundo Aberto','Indie','Simulação','Estratégia','Luta','Plataforma','Corrida','Musical','Animação','Policial','Guerra'];
 const PLATFORM_SUGGESTIONS = ['Físico','Kindle','Webtoon','Tapas','MangaUpdates','Bato.to','Digital (compra)','Netflix','Crunchyroll','HBO Max','Disney+','Prime Video','Viki','Kocowa','Cinema','PC','PlayStation','Xbox','Switch','Steam','Outro'];
 const CSV_HEADERS = ['Título','Título original','Capa','Categoria','Status','Autor / Diretor(a) / Estúdio','Artista / Elenco','Gêneros','Nota','Review','Progresso atual','Progresso total','Etapa atual','Etapa total','Data início','Data término','Plataforma','Link','Favorito','Notas','Adicionado em','Atualizado em'];
@@ -1119,7 +1159,7 @@ function mapRowToEntry(row){
     originalTitle: row.original_title || '',
     coverUrl: row.cover_url || '',
     type: row.type || 'Outro',
-    status: row.status || 'Quero conferir',
+    status: row.status || (statusGroupFor(row.type || 'Outro')[4]),
     author: row.author || '',
     artist: row.artist || '',
     genres: row.genres || [],
@@ -1289,15 +1329,13 @@ function updateStorageExplainer(){
 /* ---------------- populate static selects ---------------- */
 function populateStaticOptions(){
   const typeSelect = document.getElementById('f_type');
-  const statusSelect = document.getElementById('f_status');
   const filterType = document.getElementById('filterType');
   const filterStatus = document.getElementById('filterStatus');
   TYPES.forEach(function(t){
     typeSelect.innerHTML += '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>';
     filterType.innerHTML += '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>';
   });
-  STATUSES.forEach(function(s){
-    statusSelect.innerHTML += '<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>';
+  ALL_STATUSES.forEach(function(s){
     filterStatus.innerHTML += '<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>';
   });
   const genreList = document.getElementById('genreSuggestions');
@@ -1305,11 +1343,19 @@ function populateStaticOptions(){
   const platformList = document.getElementById('platformSuggestions');
   PLATFORM_SUGGESTIONS.forEach(function(p){ platformList.innerHTML += '<option value="'+escapeHtml(p)+'">'; });
   document.getElementById('f_type').addEventListener('change', function(ev){ applyTypeConfig(ev.target.value); });
+  populateHeroSearchTypeFilter();
 }
 
 function applyTypeConfig(type){
   const cfg = mediaCfg(type);
   document.getElementById('label_author').textContent = cfg.author;
+
+  const statusSelect = document.getElementById('f_status');
+  const prevIndex = Math.max(0, Array.from(statusSelect.options).findIndex(function(o){ return o.value === statusSelect.value; }));
+  const newGroup = statusGroupFor(type);
+  statusSelect.innerHTML = newGroup.map(function(s){ return '<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>'; }).join('');
+  statusSelect.selectedIndex = (prevIndex >= 0 && prevIndex < newGroup.length) ? prevIndex : 4;
+
   const artistWrap = document.getElementById('wrap_artist');
   if(cfg.artist){
     artistWrap.style.display = '';
@@ -1409,6 +1455,11 @@ const ANILIST_GENRE_MAP = {
   'Supernatural':'Sobrenatural','Thriller':'Suspense','Tragedy':'Tragédia','Ecchi':'Ecchi',
   'Mecha':'Mecha','Music':'Musical','Historical':'Histórico'
 };
+const ANILIST_STATUS_MAP = {
+  'FINISHED':'Finalizado','RELEASING':'Em lançamento','NOT_YET_RELEASED':'Ainda não lançado',
+  'CANCELLED':'Cancelado','HIATUS':'Em hiato'
+};
+const HERO_SEARCH_TYPES = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoon','Anime','Livro'];
 function mapAniListGenres(list){
   return (list||[]).map(function(g){ return ANILIST_GENRE_MAP[g] || g; });
 }
@@ -1418,8 +1469,20 @@ function guessMangaType(format, country){
   if(country === 'CN' || country === 'TW') return 'Manhua';
   return 'Mangá';
 }
-async function searchAniListCombined(title){
-  const query = 'query($search:String){ anime: Page(page:1, perPage:6){ media(search:$search, type:ANIME){ id title{romaji english native} coverImage{large} genres siteUrl format } } manga: Page(page:1, perPage:6){ media(search:$search, type:MANGA){ id title{romaji english native} coverImage{large} genres siteUrl format countryOfOrigin } } }';
+function populateHeroSearchTypeFilter(){
+  const sel = document.getElementById('heroSearchTypeFilter');
+  sel.innerHTML = '<option value="">Todas as categorias</option>';
+  TYPES.forEach(function(t){
+    sel.innerHTML += '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>';
+  });
+}
+async function searchAniListCombined(title, onlyAnime, onlyManga){
+  const wantAnime = !onlyManga;
+  const wantManga = !onlyAnime;
+  const parts = [];
+  if(wantAnime) parts.push('anime: Page(page:1, perPage:8){ media(search:$search, type:ANIME){ id title{romaji english native} synonyms coverImage{large} genres siteUrl format status studios(isMain:true){ nodes{ name } } } }');
+  if(wantManga) parts.push('manga: Page(page:1, perPage:8){ media(search:$search, type:MANGA){ id title{romaji english native} synonyms coverImage{large} genres siteUrl format status countryOfOrigin staff(perPage:2, sort:RELEVANCE){ edges{ role node{ name{full} } } } } }');
+  const query = 'query($search:String){ ' + parts.join(' ') + ' }';
   const res = await fetch('https://graphql.anilist.co', {
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
@@ -1430,30 +1493,41 @@ async function searchAniListCombined(title){
   const out = [];
   const animeList = (json && json.data && json.data.anime && json.data.anime.media) || [];
   animeList.forEach(function(m){
+    const studio = (m.studios && m.studios.nodes && m.studios.nodes[0]) ? m.studios.nodes[0].name : '';
     out.push({
       title: m.title.english || m.title.romaji,
       originalTitle: m.title.native || '',
+      synonyms: (m.synonyms||[]).slice(0,3),
       coverUrl: m.coverImage ? m.coverImage.large : '',
       type: 'Anime',
       genres: mapAniListGenres(m.genres),
-      link: m.siteUrl || ''
+      link: m.siteUrl || '',
+      author: studio,
+      workStatus: ANILIST_STATUS_MAP[m.status] || ''
     });
   });
   const mangaList = (json && json.data && json.data.manga && json.data.manga.media) || [];
   mangaList.forEach(function(m){
+    const staffEdges = (m.staff && m.staff.edges) || [];
+    const author = staffEdges[0] ? staffEdges[0].node.name.full : '';
+    const artist = staffEdges[1] ? staffEdges[1].node.name.full : '';
     out.push({
       title: m.title.english || m.title.romaji,
       originalTitle: m.title.native || '',
+      synonyms: (m.synonyms||[]).slice(0,3),
       coverUrl: m.coverImage ? m.coverImage.large : '',
       type: guessMangaType(m.format, m.countryOfOrigin),
       genres: mapAniListGenres(m.genres),
-      link: m.siteUrl || ''
+      link: m.siteUrl || '',
+      author: author,
+      artist: artist,
+      workStatus: ANILIST_STATUS_MAP[m.status] || ''
     });
   });
   return out;
 }
 async function searchOpenLibraryList(title){
-  const res = await fetch('https://openlibrary.org/search.json?title='+encodeURIComponent(title)+'&limit=6');
+  const res = await fetch('https://openlibrary.org/search.json?title='+encodeURIComponent(title)+'&limit=8');
   if(!res.ok) throw new Error('openlibrary error');
   const json = await res.json();
   const docs = (json && json.docs) || [];
@@ -1461,37 +1535,55 @@ async function searchOpenLibraryList(title){
     return {
       title: d.title || '',
       originalTitle: '',
+      synonyms: [],
       coverUrl: 'https://covers.openlibrary.org/b/id/'+d.cover_i+'-L.jpg',
       type: 'Livro',
       genres: [],
       author: (d.author_name && d.author_name[0]) || '',
-      link: d.key ? ('https://openlibrary.org'+d.key) : ''
+      link: d.key ? ('https://openlibrary.org'+d.key) : '',
+      workStatus: ''
     };
   });
 }
 let heroSearchToken = 0;
-document.getElementById('heroSearchInput').addEventListener('input', debounce(async function(ev){
-  const q = ev.target.value.trim();
+async function runHeroSearch(){
+  const q = document.getElementById('heroSearchInput').value.trim();
+  const typeFilter = document.getElementById('heroSearchTypeFilter').value;
   const resultsBox = document.getElementById('heroSearchResults');
   const myToken = ++heroSearchToken;
   if(q.length < 2){ resultsBox.innerHTML = ''; return; }
+
+  const mangaTypes = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoon'];
+  const wantsAniList = !typeFilter || typeFilter === 'Anime' || mangaTypes.indexOf(typeFilter) !== -1;
+  const wantsBooks = !typeFilter || typeFilter === 'Livro';
+  if(typeFilter && !wantsAniList && !wantsBooks){
+    resultsBox.innerHTML = '<div class="hero-search-status">Busca automática ainda não disponível para essa categoria. Adicione manualmente pela Biblioteca.</div>';
+    return;
+  }
+  const onlyAnime = typeFilter === 'Anime';
+  const onlyManga = mangaTypes.indexOf(typeFilter) !== -1;
+
   resultsBox.innerHTML = '<div class="hero-search-status">Buscando...</div>';
   try{
     const [aniList, books] = await Promise.all([
-      searchAniListCombined(q).catch(function(){ return []; }),
-      searchOpenLibraryList(q).catch(function(){ return []; })
+      wantsAniList ? searchAniListCombined(q, onlyAnime, onlyManga).catch(function(){ return []; }) : Promise.resolve([]),
+      wantsBooks ? searchOpenLibraryList(q).catch(function(){ return []; }) : Promise.resolve([])
     ]);
     if(myToken !== heroSearchToken) return;
-    const combined = aniList.concat(books).filter(function(r){ return r.title; });
+    let combined = aniList.concat(books).filter(function(r){ return r.title; });
+    if(typeFilter) combined = combined.filter(function(r){ return r.type === typeFilter; });
     if(!combined.length){
       resultsBox.innerHTML = '<div class="hero-search-status">Nenhum resultado encontrado. Você ainda pode adicionar manualmente pela Biblioteca.</div>';
       return;
     }
     resultsBox.innerHTML = combined.map(function(r, idx){
       const cover = r.coverUrl ? '<img src="'+escapeHtml(r.coverUrl)+'" alt="" loading="lazy" onerror="this.remove()">' : '';
+      const altTitle = r.synonyms && r.synonyms.length ? '<div class="hero-result-meta">também: '+escapeHtml(r.synonyms.join(', '))+'</div>' : '';
+      const authorLine = r.author ? '<div class="hero-result-meta">'+escapeHtml(r.author)+'</div>' : '';
+      const badge = r.workStatus ? '<span class="hero-result-badge">'+escapeHtml(r.workStatus)+'</span>' : '';
       return '<button type="button" class="hero-result" data-idx="'+idx+'">'+cover+
         '<div class="hero-result-body"><div class="hero-result-title">'+escapeHtml(r.title)+'</div>'+
-        '<div class="hero-result-type">'+escapeHtml(r.type)+'</div></div></button>';
+        '<div class="hero-result-type">'+escapeHtml(r.type)+'</div>'+authorLine+altTitle+badge+'</div></button>';
     }).join('');
     resultsBox.querySelectorAll('.hero-result').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -1503,18 +1595,21 @@ document.getElementById('heroSearchInput').addEventListener('input', debounce(as
         document.getElementById('f_type').value = r.type;
         applyTypeConfig(r.type);
         if(r.author) document.getElementById('f_author').value = r.author;
+        if(r.artist) document.getElementById('f_artist').value = r.artist;
         document.getElementById('f_link').value = r.link || '';
         state.currentGenreTags = (r.genres||[]).slice();
         renderGenreChips();
         showCoverPreview(r.coverUrl || '');
-        toast('Item pré-preenchido. Confira e salve.');
+        toast(r.workStatus ? 'Item pré-preenchido. Obra ' + r.workStatus.toLowerCase() + '. Confira e salve.' : 'Item pré-preenchido. Confira e salve.');
       });
     });
   }catch(e){
     if(myToken !== heroSearchToken) return;
     resultsBox.innerHTML = '<div class="hero-search-status">Não consegui buscar agora. Tente de novo em instantes.</div>';
   }
-}, 500));
+}
+document.getElementById('heroSearchInput').addEventListener('input', debounce(runHeroSearch, 500));
+document.getElementById('heroSearchTypeFilter').addEventListener('change', runHeroSearch);
 
 function refreshGenreFilterOptions(){
   const set = new Set();
@@ -1532,33 +1627,36 @@ function refreshGenreFilterOptions(){
 document.getElementById('tabs').addEventListener('click', function(e){
   const btn = e.target.closest('button[data-view]');
   if(!btn) return;
-  document.querySelectorAll('nav.tabs button').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-  document.getElementById('view-' + btn.dataset.view).classList.add('active');
-  if(btn.dataset.view === 'dashboard') renderDashboard();
-  if(btn.dataset.view === 'library') renderLibrary();
-  if(btn.dataset.view === 'account') refreshAccountView();
+  switchToView(btn.dataset.view);
 });
+function switchToView(view){
+  document.querySelectorAll('nav.tabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.view === view); });
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('view-' + view).classList.add('active');
+  if(view === 'dashboard') renderDashboard();
+  if(view === 'library') renderLibrary();
+  if(view === 'account') refreshAccountView();
+}
+document.getElementById('btnOpenSettings').addEventListener('click', function(){ switchToView('account'); });
 
 /* ---------------- dashboard ---------------- */
 function renderDashboard(){
   const total = state.entries.length;
-  const byStatus = {};
-  STATUSES.forEach(function(s){ byStatus[s] = 0; });
-  state.entries.forEach(function(e){ if(byStatus[e.status] !== undefined) byStatus[e.status]++; });
+  const ongoingCount = state.entries.filter(function(e){ return ONGOING_STATUSES.indexOf(e.status) !== -1; }).length;
+  const completoCount = state.entries.filter(function(e){ return e.status === 'Completo'; }).length;
+  const planCount = state.entries.filter(function(e){ return PLAN_STATUSES.indexOf(e.status) !== -1; }).length;
 
   const statRow = document.getElementById('statRow');
   statRow.innerHTML =
     '<div class="stat-card"><div class="num">'+total+'</div><div class="label">itens no acervo</div></div>' +
-    '<div class="stat-card"><div class="num">'+byStatus['Em andamento']+'</div><div class="label">em andamento</div></div>' +
-    '<div class="stat-card"><div class="num">'+byStatus['Completo']+'</div><div class="label">completos</div></div>' +
-    '<div class="stat-card"><div class="num">'+byStatus['Quero conferir']+'</div><div class="label">quero conferir</div></div>';
+    '<div class="stat-card"><div class="num">'+ongoingCount+'</div><div class="label">em andamento</div></div>' +
+    '<div class="stat-card"><div class="num">'+completoCount+'</div><div class="label">completos</div></div>' +
+    '<div class="stat-card"><div class="num">'+planCount+'</div><div class="label">quero conferir</div></div>';
 
-  const readingNow = state.entries.filter(function(e){ return e.status === 'Em andamento'; })
+  const readingNow = state.entries.filter(function(e){ return ONGOING_STATUSES.indexOf(e.status) !== -1; })
     .sort(function(a,b){ return new Date(b.dateUpdated) - new Date(a.dateUpdated); }).slice(0,8);
   document.getElementById('readingNowList').innerHTML = readingNow.length ? readingNow.map(miniRowHtml).join('') :
-    '<div class="empty-note">Nada em andamento agora. Marque um item como "Em andamento" para ele aparecer aqui.</div>';
+    '<div class="empty-note">Nada em andamento agora. Marque um item como lendo, assistindo ou jogando para ele aparecer aqui.</div>';
 
   const recent = state.entries.slice().sort(function(a,b){ return new Date(b.dateAdded) - new Date(a.dateAdded); }).slice(0,8);
   document.getElementById('recentList').innerHTML = recent.length ? recent.map(miniRowHtml).join('') :
@@ -1642,14 +1740,12 @@ function renderLibrary(){
 }
 
 function statusChipStyle(status){
-  switch(status){
-    case 'Em andamento': return 'background:var(--status-active-bg);color:var(--status-active-fg);';
-    case 'Completo': return 'background:var(--status-done-bg);color:var(--status-done-fg);';
-    case 'Pausado': return 'background:var(--white);border-color:var(--status-paused-fg);color:var(--status-paused-fg);';
-    case 'Abandonado': return 'background:var(--status-dropped-bg);color:var(--status-dropped-fg);';
-    case 'Revisitando': return 'background:var(--status-revisit-bg);color:var(--status-revisit-fg);';
-    default: return 'background:var(--ghost);border-color:var(--status-plan-fg);color:var(--status-plan-fg);';
-  }
+  if(status === 'Completo') return 'background:var(--status-done-bg);color:var(--status-done-fg);';
+  if(ONGOING_STATUSES.indexOf(status) !== -1) return 'background:var(--status-active-bg);color:var(--status-active-fg);';
+  if(status === 'Pausado') return 'background:var(--white);border-color:var(--status-paused-fg);color:var(--status-paused-fg);';
+  if(status === 'Abandonado') return 'background:var(--status-dropped-bg);color:var(--status-dropped-fg);';
+  if(REVISIT_STATUSES.indexOf(status) !== -1) return 'background:var(--status-revisit-bg);color:var(--status-revisit-fg);';
+  return 'background:var(--ghost);border-color:var(--status-plan-fg);color:var(--status-plan-fg);';
 }
 
 function starsHtml(rating){
@@ -1806,7 +1902,6 @@ function openEntryModal(id){
   document.getElementById('f_coverUrl').value = e ? e.coverUrl||'' : '';
   showCoverPreview(e ? e.coverUrl||'' : '');
   document.getElementById('f_type').value = e ? e.type : TYPES[0];
-  document.getElementById('f_status').value = e ? e.status : 'Quero conferir';
   document.getElementById('f_author').value = e ? e.author||'' : '';
   document.getElementById('f_artist').value = e ? e.artist||'' : '';
   document.getElementById('f_progressCurrent').value = e && e.progressCurrent!=null ? e.progressCurrent : '';
@@ -1827,6 +1922,7 @@ function openEntryModal(id){
   buildStarInput();
   renderStarDisplay();
   applyTypeConfig(document.getElementById('f_type').value);
+  if(e && e.status){ document.getElementById('f_status').value = e.status; }
 
   document.getElementById('entryOverlay').classList.add('show');
   document.getElementById('f_title').focus();
@@ -2044,7 +2140,7 @@ function parseOwnJson(text){
 function parseMalXml(text){
   const doc = new DOMParser().parseFromString(text, 'text/xml');
   const nodes = doc.getElementsByTagName('manga');
-  const statusMap = {'Reading':'Em andamento','Completed':'Completo','On-Hold':'Pausado','Dropped':'Abandonado','Plan to Read':'Quero conferir','Rereading':'Revisitando'};
+  const statusMap = {'Reading':'Lendo','Completed':'Completo','On-Hold':'Pausado','Dropped':'Abandonado','Plan to Read':'Quero ler','Rereading':'Relendo'};
   const entries = [];
   for(let i=0;i<nodes.length;i++){
     const n = nodes[i];
@@ -2055,7 +2151,7 @@ function parseMalXml(text){
     entries.push(newEmptyEntry({
       title: get('manga_title'),
       type: 'Mangá',
-      status: statusMap[rawStatus] || 'Quero conferir',
+      status: statusMap[rawStatus] || 'Quero ler',
       genres: tags ? tags.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [],
       rating: (score && score > 0) ? score : null,
       progressCurrent: numOrNullStr(get('my_read_chapters')),
@@ -2086,14 +2182,14 @@ function parseCsvSmart(text){
 }
 
 function parseGoodreadsRows(rows){
-  const shelfMap = {'read':'Completo','currently-reading':'Em andamento','to-read':'Quero conferir'};
+  const shelfMap = {'read':'Completo','currently-reading':'Lendo','to-read':'Quero ler'};
   const entries = rows.filter(function(r){ return r.Title; }).map(function(r){
     const my = parseFloat(r['My Rating']);
     return newEmptyEntry({
       title: r.Title || '',
       author: r.Author || '',
       type: 'Livro',
-      status: shelfMap[r['Exclusive Shelf']] || 'Quero conferir',
+      status: shelfMap[r['Exclusive Shelf']] || 'Quero ler',
       rating: (my && my > 0) ? Math.round(my*2) : null,
       progressTotal: numOrNullStr(r['Number of Pages']),
       endDate: r['Date Read'] || '',
@@ -2207,7 +2303,8 @@ function openMappingUi(fields, rows){
         }
       });
       if(!obj.type || TYPES.indexOf(obj.type) === -1) obj.type = 'Outro';
-      if(!obj.status || STATUSES.indexOf(obj.status) === -1) obj.status = 'Quero conferir';
+      const validStatuses = statusGroupFor(obj.type);
+      if(!obj.status || validStatuses.indexOf(obj.status) === -1) obj.status = validStatuses[4];
       return newEmptyEntry(obj);
     }).filter(function(e){ return e.title; });
     showImportPreview(entries, 'planilha genérica (.csv)');
@@ -2255,22 +2352,26 @@ async function checkSupabaseSession(){
 
 let configFormExpanded = false;
 
+let adminModeUnlocked = false;
+
 async function refreshAccountView(){
   const summary = document.getElementById('supabaseConfigSummary');
   const form = document.getElementById('supabaseConfigForm');
-  const authPanel = document.getElementById('authPanel');
   const clearBtn = document.getElementById('btnClearSupabaseConfig');
+  const cardConnection = document.getElementById('cardConnection');
+  const cardProfile = document.getElementById('cardProfile');
   updateStorageExplainer();
   updateAccountBadge();
 
   if(!supaConfig){
+    // primeira configuração ainda não feita: mostra só a conexão técnica
     summary.style.display = 'none';
     form.style.display = '';
     clearBtn.style.display = 'none';
-    authPanel.style.display = 'none';
     document.getElementById('migratePanel').style.display = 'none';
-    document.getElementById('profileLoggedOut').style.display = '';
-    document.getElementById('profileLoggedIn').style.display = 'none';
+    cardConnection.style.display = '';
+    cardProfile.style.display = 'none';
+    document.getElementById('panel-profile').style.display = 'none';
     return;
   }
 
@@ -2287,23 +2388,39 @@ async function refreshAccountView(){
     form.style.display = 'none';
   }
 
-  authPanel.style.display = '';
+  // já configurado: conexão técnica some da lista, só reaparece em modo administrador
+  cardConnection.style.display = adminModeUnlocked ? '' : 'none';
+  if(!adminModeUnlocked) document.getElementById('panel-connection').style.display = 'none';
+  cardProfile.style.display = '';
+
   if(supaUser){
-    document.getElementById('authLoggedOut').style.display = 'none';
-    document.getElementById('authLoggedIn').style.display = '';
-    document.getElementById('authUserEmail').textContent = supaUser.email;
     document.getElementById('profileLoggedOut').style.display = 'none';
     document.getElementById('profileLoggedIn').style.display = '';
     document.getElementById('profileEmailDisplay').textContent = supaUser.email;
     await maybeOfferMigration();
   } else {
-    document.getElementById('authLoggedOut').style.display = '';
-    document.getElementById('authLoggedIn').style.display = 'none';
     document.getElementById('profileLoggedOut').style.display = '';
     document.getElementById('profileLoggedIn').style.display = 'none';
     document.getElementById('migratePanel').style.display = 'none';
   }
 }
+
+function unlockAdminMode(){
+  adminModeUnlocked = true;
+  toast('Modo administrador ativado. A conexão com o Supabase ficou visível nas Configurações.');
+  refreshAccountView();
+}
+let brandClickCount = 0;
+let brandClickTimer = null;
+document.getElementById('brandMarkClickTarget').addEventListener('click', function(){
+  brandClickCount++;
+  clearTimeout(brandClickTimer);
+  brandClickTimer = setTimeout(function(){ brandClickCount = 0; }, 1500);
+  if(brandClickCount >= 5){
+    brandClickCount = 0;
+    unlockAdminMode();
+  }
+});
 
 function updateAccountBadge(){
   const badge = document.getElementById('accountBadge');
