@@ -218,14 +218,14 @@
     border-radius:var(--radius-lg);
     padding:14px;
   }
-  .toolbar input[type=text],.toolbar select{
+  .toolbar input[type=text],.toolbar input[type=search],.toolbar select{
     padding:8px 10px;
     border:1px solid var(--line-strong);
     border-radius:8px;
     background:var(--white);
     color:var(--navy);
   }
-  .toolbar input[type=text]{flex:1;min-width:160px;}
+  .toolbar input[type=text],.toolbar input[type=search]{flex:1;min-width:160px;}
   .btn{
     padding:9px 16px;
     border-radius:8px;
@@ -711,10 +711,14 @@
       <div class="hero-search">
         <h2>Buscar e adicionar</h2>
         <p>Digite um título de mangá, anime ou livro. A capa, o título original, o link, os gêneros, o status da obra e autor/artista vêm sozinhos.</p>
-        <div class="hero-search-row">
-          <input type="search" id="heroSearchInput" placeholder="Digite um título..." autocomplete="off" name="virtualist-hero-search" data-lpignore="true" data-1p-ignore>
-          <select id="heroSearchTypeFilter"></select>
-        </div>
+        <form id="heroSearchForm" autocomplete="off" onsubmit="return false;">
+          <input type="text" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="off">
+          <input type="password" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
+          <div class="hero-search-row">
+            <input type="search" id="heroSearchInput" placeholder="Digite um título..." autocomplete="off" name="virtualist-hero-search" data-lpignore="true" data-1p-ignore>
+            <select id="heroSearchTypeFilter"></select>
+          </div>
+        </form>
         <div id="heroSearchResults"></div>
         <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para jogo, adicione manualmente pela Biblioteca por enquanto.</p>
       </div>
@@ -731,7 +735,11 @@
     <!-- LIBRARY -->
     <section class="view" id="view-library">
       <div class="toolbar">
-        <input type="search" id="searchInput" placeholder="Buscar por título, autor(a) ou diretor(a)" autocomplete="off" name="virtualist-library-search" data-lpignore="true" data-1p-ignore>
+        <form id="librarySearchForm" autocomplete="off" onsubmit="return false;" style="display:contents;">
+          <input type="text" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="off">
+          <input type="password" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
+          <input type="search" id="searchInput" placeholder="Buscar por título, autor(a) ou diretor(a)" autocomplete="off" name="virtualist-library-search" data-lpignore="true" data-1p-ignore>
+        </form>
         <select id="filterType"><option value="">Todas as categorias</option></select>
         <select id="filterStatus"><option value="">Todos os status</option></select>
         <select id="filterGenre"><option value="">Todos os gêneros</option></select>
