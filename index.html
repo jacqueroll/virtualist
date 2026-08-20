@@ -400,6 +400,12 @@
   }
   .modal-small{max-width:440px;}
   .modal h2{font-size:21px;font-weight:700;color:var(--navy);margin:0 0 18px;}
+  .modal-close-btn{
+    background:none;border:none;cursor:pointer;
+    font-size:22px;line-height:1;color:var(--muted);
+    padding:2px 6px;border-radius:6px;flex-shrink:0;
+  }
+  .modal-close-btn:hover{color:var(--navy);background:var(--surface-alt);}
   .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;border-top:1px solid var(--line);padding-top:16px;}
 
   /* settings hub */
@@ -933,7 +939,10 @@
 <!-- ENTRY MODAL -->
 <div class="overlay" id="entryOverlay">
   <div class="modal">
-    <h2 id="entryModalTitle">Novo item</h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;">
+      <h2 id="entryModalTitle" style="margin:0;">Novo item</h2>
+      <button type="button" class="modal-close-btn" id="btnCloseEntryModal" aria-label="Fechar">×</button>
+    </div>
     <form id="entryForm">
       <div class="field-row">
         <div class="field">
@@ -2188,6 +2197,10 @@ function closeEntryModal(){
 }
 document.getElementById('btnNewEntry').addEventListener('click', function(){ openEntryModal(null); });
 document.getElementById('btnCancelEntry').addEventListener('click', closeEntryModal);
+document.getElementById('btnCloseEntryModal').addEventListener('click', closeEntryModal);
+document.getElementById('entryOverlay').addEventListener('click', function(ev){
+  if(ev.target === this) closeEntryModal();
+});
 
 document.getElementById('entryForm').addEventListener('submit', async function(ev){
   ev.preventDefault();
