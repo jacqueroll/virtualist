@@ -983,7 +983,7 @@
         <div id="coverPreviewWrap" style="margin-top:8px;display:none;">
           <img id="coverPreview" src="" alt="" style="max-height:120px;border-radius:8px;border:1px solid var(--line-strong);display:block;">
         </div>
-        <p class="hint" id="coverHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime, livro, filme, série, dorama e jogo (algumas categorias dependem de uma chave configurada nas Configurações).</p>
+        <p class="hint" id="coverHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, visual novel, webtoon, anime, livro, filme, série, dorama e jogo (algumas categorias dependem de uma chave configurada nas Configurações).</p>
       </div>
 
       <div class="field-row">
@@ -1111,7 +1111,7 @@
 "use strict";
 
 /* ---------------- constants ---------------- */
-const TYPES = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoon','Livro','Anime','Dorama','Série','Filme','Jogo','Outro'];
+const TYPES = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Visual Novel','Webtoon','Livro','Anime','Dorama','Série','Filme','Jogo','Outro'];
 const STATUS_SETS = {
   reading: ['Lendo','Completo','Pausado','Abandonado','Quero ler','Relendo'],
   watching: ['Assistindo','Completo','Pausado','Abandonado','Quero assistir','Reassistindo'],
@@ -1119,7 +1119,7 @@ const STATUS_SETS = {
   generic: ['Em andamento','Completo','Pausado','Abandonado','Quero conferir','Revisitando']
 };
 const TYPE_STATUS_GROUP = {
-  'Mangá':'reading','Manhwa':'reading','Manhua':'reading','Danmei (Novel)':'reading','Light Novel':'reading','Webtoon':'reading','Livro':'reading',
+  'Mangá':'reading','Manhwa':'reading','Manhua':'reading','Danmei (Novel)':'reading','Light Novel':'reading','Visual Novel':'reading','Webtoon':'reading','Livro':'reading',
   'Anime':'watching','Dorama':'watching','Série':'watching','Filme':'watching',
   'Jogo':'playing',
   'Outro':'generic'
@@ -1140,6 +1140,7 @@ const MEDIA_LABELS = {
   'Manhua':          {author:'Autor(a)', artist:'Artista', progress:'Capítulo', sub:'Volume'},
   'Danmei (Novel)':  {author:'Autor(a)', artist:'Ilustrador(a)', progress:'Capítulo', sub:'Volume'},
   'Light Novel':     {author:'Autor(a)', artist:'Ilustrador(a)', progress:'Capítulo', sub:'Volume'},
+  'Visual Novel':    {author:'Roteirista', artist:'Ilustrador(a)', progress:'Capítulo', sub:'Rota'},
   'Webtoon':         {author:'Autor(a)', artist:'Artista', progress:'Episódio', sub:null},
   'Livro':           {author:'Autor(a)', artist:null, progress:'Página', sub:null},
   'Anime':           {author:'Estúdio', artist:'Diretor(a)', progress:'Episódio', sub:'Temporada'},
@@ -1222,7 +1223,7 @@ let supaConfig = null;
 const DEFAULT_SUPABASE_URL = 'https://awmqrvqqbahbsdsgwxem.supabase.co';
 const DEFAULT_SUPABASE_KEY = 'sb_publishable_1u7xXTIXzBPWJui-rpwzGw_aoZMosg_';
 const DEFAULT_TMDB_KEY = '5dfdb3eeeca2a97ebcbe797ac81dec55';
-const DEFAULT_RAWG_KEY = '';
+const DEFAULT_RAWG_KEY = '814e7cc924374a989f6679b38f312a46';
 
 /* ---------------- helpers ---------------- */
 function uid(){
@@ -1549,7 +1550,7 @@ const COVER_SOURCE = {
   'Danmei (Novel)':'anilist-manga','Light Novel':'anilist-manga','Webtoon':'anilist-manga',
   'Anime':'anilist-anime','Livro':'openlibrary',
   'Filme':'tmdb-movie','Série':'tmdb-tv','Dorama':'tmdb-tv',
-  'Jogo':'rawg'
+  'Jogo':'rawg','Visual Novel':'vndb'
 };
 function coverSourceAvailable(type){
   const source = COVER_SOURCE[type];
@@ -1586,6 +1587,11 @@ async function fetchCoverTmdb(title, isTv){
 }
 async function fetchCoverRawg(title){
   const results = await searchRawgList(title);
+  if(!results.length || !results[0].coverUrl) throw new Error('not found');
+  return results[0].coverUrl;
+}
+async function fetchCoverVndb(title){
+  const results = await searchVndbList(title);
   if(!results.length || !results[0].coverUrl) throw new Error('not found');
   return results[0].coverUrl;
 }
@@ -1626,6 +1632,7 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
     else if(source === 'tmdb-movie') url = await fetchCoverTmdb(title, false);
     else if(source === 'tmdb-tv') url = await fetchCoverTmdb(title, true);
     else if(source === 'rawg') url = await fetchCoverRawg(title);
+    else if(source === 'vndb') url = await fetchCoverVndb(title);
     document.getElementById('f_coverUrl').value = url;
     showCoverPreview(url);
     toast('Capa encontrada.');
@@ -1757,7 +1764,7 @@ let tmdbApiKey = null;
 function updateHeroSearchHint(){
   const el = document.getElementById('heroSearchHint');
   if(!el) return;
-  const base = ['mangá','manhwa','manhua','danmei','light novel','webtoon','anime','livro'];
+  const base = ['mangá','manhwa','manhua','danmei','light novel','visual novel','webtoon','anime','livro'];
   if(tmdbApiKey) base.push('filme','série','dorama');
   if(rawgApiKey) base.push('jogo');
   const missing = [];
@@ -1891,6 +1898,41 @@ async function enrichRawgResult(result){
   return result;
 }
 
+/* VNDB: visual novel */
+async function searchVndbList(title){
+  try{
+    const res = await fetch('https://api.vndb.org/kana/vn', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        filters: ['search','=',title],
+        fields: 'title, alttitle, image.url, released, tags.name, tags.category, tags.rating',
+        results: 8
+      })
+    });
+    if(!res.ok) return [];
+    const json = await res.json();
+    const results = (json && json.results) || [];
+    return results.map(function(vn){
+      const contentTags = (vn.tags||[]).filter(function(t){ return t.category === 'cont'; })
+        .sort(function(a,b){ return (b.rating||0) - (a.rating||0); }).slice(0,3)
+        .map(function(t){ return GENRE_TRANSLATE_MAP[t.name] || t.name; });
+      const isFuture = vn.released && new Date(vn.released) > new Date();
+      return {
+        title: vn.title || '',
+        originalTitle: vn.alttitle || '',
+        synonyms: [],
+        coverUrl: (vn.image && vn.image.url) || '',
+        type: 'Visual Novel',
+        genres: contentTags,
+        link: vn.id ? ('https://vndb.org/'+vn.id) : '',
+        author: '',
+        workStatus: vn.released ? (isFuture ? 'Ainda não lançado' : 'Lançado') : ''
+      };
+    });
+  }catch(e){ return []; }
+}
+
 let heroSearchToken = 0;
 async function runHeroSearch(){
   const q = document.getElementById('heroSearchInput').value.trim();
@@ -1905,7 +1947,8 @@ async function runHeroSearch(){
   const wantsBooks = !typeFilter || typeFilter === 'Livro';
   const wantsTmdb = !!tmdbApiKey && (!typeFilter || typeFilter === 'Filme' || tvTypes.indexOf(typeFilter) !== -1);
   const wantsRawg = !!rawgApiKey && (!typeFilter || typeFilter === 'Jogo');
-  if(typeFilter && !wantsAniList && !wantsBooks && !wantsTmdb && !wantsRawg){
+  const wantsVndb = !typeFilter || typeFilter === 'Visual Novel';
+  if(typeFilter && !wantsAniList && !wantsBooks && !wantsTmdb && !wantsRawg && !wantsVndb){
     const needsTmdb = typeFilter === 'Filme' || tvTypes.indexOf(typeFilter) !== -1;
     const needsRawg = typeFilter === 'Jogo';
     resultsBox.innerHTML = (needsTmdb || needsRawg)
@@ -1920,14 +1963,15 @@ async function runHeroSearch(){
 
   resultsBox.innerHTML = '<div class="hero-search-status">Buscando...</div>';
   try{
-    const [aniList, books, tmdb, rawg] = await Promise.all([
+    const [aniList, books, tmdb, rawg, vndb] = await Promise.all([
       wantsAniList ? searchAniListCombined(q, onlyAnime, onlyManga).catch(function(){ return []; }) : Promise.resolve([]),
       wantsBooks ? searchOpenLibraryList(q).catch(function(){ return []; }) : Promise.resolve([]),
       wantsTmdb ? searchTmdbCombined(q, onlyMovie, onlyTv).catch(function(){ return []; }) : Promise.resolve([]),
-      wantsRawg ? searchRawgList(q).catch(function(){ return []; }) : Promise.resolve([])
+      wantsRawg ? searchRawgList(q).catch(function(){ return []; }) : Promise.resolve([]),
+      wantsVndb ? searchVndbList(q).catch(function(){ return []; }) : Promise.resolve([])
     ]);
     if(myToken !== heroSearchToken) return;
-    let combined = aniList.concat(books).concat(tmdb).concat(rawg).filter(function(r){ return r.title; });
+    let combined = aniList.concat(books).concat(tmdb).concat(rawg).concat(vndb).filter(function(r){ return r.title; });
     if(typeFilter) combined = combined.filter(function(r){ return r.type === typeFilter; });
     if(!combined.length){
       resultsBox.innerHTML = '<div class="hero-search-status">Nenhum resultado encontrado. Você ainda pode adicionar manualmente pela Biblioteca.</div>';
