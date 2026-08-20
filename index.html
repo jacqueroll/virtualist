@@ -515,6 +515,35 @@
   @keyframes toast-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
   /* footer */
+  /* auth gate */
+  .auth-gate{
+    position:fixed;inset:0;
+    background:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    z-index:200;
+    overflow-y:auto;
+  }
+  .auth-gate-card{
+    background:var(--white);
+    border-radius:var(--radius-lg);
+    padding:36px 32px 28px;
+    max-width:380px;
+    width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .auth-gate-brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:8px;}
+  .auth-gate-brand span{font-family:'Space Grotesk',var(--font-body);font-weight:600;font-size:24px;color:var(--navy);}
+  .auth-gate-tagline{text-align:center;color:var(--muted);font-size:12px;margin:0 0 24px;line-height:1.5;}
+  .auth-gate-tabs{display:flex;border-radius:8px;background:var(--surface-alt);padding:3px;margin-bottom:20px;}
+  .auth-gate-tab{flex:1;padding:8px;border:none;background:none;border-radius:6px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;}
+  .auth-gate-tab.active{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .auth-gate-link{display:block;width:100%;text-align:center;background:none;border:none;color:var(--slate);font-size:12.5px;font-weight:600;cursor:pointer;margin-top:14px;padding:4px;}
+  .auth-gate-link:hover{text-decoration:underline;}
+  #gateHint{min-height:16px;color:var(--slate);}
+  .auth-gate-skip{display:block;width:100%;text-align:center;background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+  .auth-gate-skip:hover{color:var(--navy);}
+
   footer.site-footer{
     background:var(--navy);
     color:var(--ghost);
@@ -534,6 +563,53 @@
 </style>
 </head>
 <body>
+
+<div class="auth-gate" id="authGate" style="display:none;">
+  <div class="auth-gate-card">
+    <div class="auth-gate-brand" id="gateBrandClickTarget" style="cursor:default;">
+      <svg width="30" height="30" viewBox="0 0 200 200" aria-hidden="true">
+        <g stroke="#191970" stroke-width="9" stroke-linecap="square" fill="none">
+          <path d="M30,70 L30,30 L70,30" />
+          <path d="M130,30 L170,30 L170,70" />
+          <path d="M30,130 L30,170 L70,170" />
+          <path d="M170,130 L170,170 L130,170" />
+        </g>
+        <g stroke="#6A5ACD" stroke-width="2.5" fill="none">
+          <line x1="100" y1="100" x2="72" y2="76" />
+          <line x1="100" y1="100" x2="129" y2="79" />
+          <line x1="100" y1="100" x2="83" y2="131" />
+          <line x1="100" y1="100" x2="126" y2="124" />
+        </g>
+        <circle cx="100" cy="100" r="10" fill="#191970" />
+        <circle cx="72" cy="76" r="6" fill="#836FFF" />
+        <circle cx="129" cy="79" r="5" fill="#6A5ACD" />
+        <circle cx="83" cy="131" r="5" fill="#6A5ACD" />
+        <circle cx="126" cy="124" r="6" fill="#836FFF" />
+      </svg>
+      <span>Virtualist</span>
+    </div>
+    <p class="auth-gate-tagline">Mangás, manhwas, manhuas, danmeis, light novels, livros, animes, doramas, séries, filmes e jogos, num só lugar.</p>
+
+    <div class="auth-gate-tabs" id="gateTabs">
+      <button type="button" class="auth-gate-tab active" data-mode="login">Login</button>
+      <button type="button" class="auth-gate-tab" data-mode="signup">Criar conta</button>
+    </div>
+
+    <form id="gateForm">
+      <div class="field"><label>E-mail</label><input type="email" id="gateEmail" autocomplete="username" required></div>
+      <div class="field" id="gatePasswordField"><label id="gatePasswordLabel">Senha</label><input type="password" id="gatePassword" autocomplete="current-password"></div>
+      <button type="submit" class="btn btn-primary" id="gateSubmitBtn" style="width:100%;">Entrar</button>
+    </form>
+
+    <button type="button" class="auth-gate-link" id="gateForgotLink">Esqueci minha senha</button>
+    <button type="button" class="auth-gate-link" id="gateBackToLogin" style="display:none;">Voltar para o login</button>
+
+    <p class="hint" id="gateHint" style="text-align:center;"></p>
+
+    <button type="button" class="auth-gate-skip" id="gateSkipLink">Continuar sem conta (salva só neste navegador)</button>
+  </div>
+</div>
+
 
 <header class="top">
   <div class="top-inner">
@@ -713,13 +789,10 @@
       <div class="settings-panel panel" id="panel-profile" style="display:none;">
         <h3>Perfil e conta</h3>
         <div id="profileLoggedOut">
-          <div class="field"><label>E-mail</label><input type="email" id="authEmail" autocomplete="username"></div>
-          <div class="field"><label>Senha</label><input type="password" id="authPassword" autocomplete="current-password"></div>
+          <p>Você está usando o Virtualist sem conta na nuvem neste navegador.</p>
           <div class="panel-actions">
-            <button class="btn btn-primary" id="btnSignIn">Entrar</button>
-            <button class="btn" id="btnSignUp">Criar conta</button>
+            <button class="btn btn-primary" id="btnReopenGate">Entrar ou criar conta</button>
           </div>
-          <p class="hint">Depois de criar a conta, confirme o e-mail antes de entrar.</p>
         </div>
         <div id="profileLoggedIn" style="display:none;">
           <p>Conectada como <strong id="profileEmailDisplay"></strong>.</p>
@@ -1066,6 +1139,8 @@ let state = {
 let supabase = null;
 let supaUser = null;
 let supaConfig = null;
+const DEFAULT_SUPABASE_URL = 'https://awmqrvqqbahbsdsgwxem.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'sb_publishable_1u7xXTIXzBPWJui-rpwzGw_aoZMosg_';
 
 /* ---------------- helpers ---------------- */
 function uid(){
@@ -2341,6 +2416,12 @@ function initSupabaseClient(url, key){
   supabase = window.supabase.createClient(url, key, {
     auth:{ storage: customAuthStorage, persistSession:true, autoRefreshToken:true }
   });
+  supabase.auth.onAuthStateChange(function(event, session){
+    if(event === 'PASSWORD_RECOVERY'){
+      document.getElementById('authGate').style.display = 'flex';
+      setGateMode('reset');
+    }
+  });
 }
 async function checkSupabaseSession(){
   if(!supabase) return;
@@ -2405,6 +2486,128 @@ async function refreshAccountView(){
   }
 }
 
+/* ---------------- auth gate (tela de entrada) ---------------- */
+let gateMode = 'login';
+function setGateMode(mode){
+  gateMode = mode;
+  document.querySelectorAll('.auth-gate-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.mode === mode); });
+  const tabs = document.getElementById('gateTabs');
+  const emailField = document.getElementById('gateEmail').closest('.field');
+  const passField = document.getElementById('gatePasswordField');
+  const forgotLink = document.getElementById('gateForgotLink');
+  const backLink = document.getElementById('gateBackToLogin');
+  const skipLink = document.getElementById('gateSkipLink');
+  const submitBtn = document.getElementById('gateSubmitBtn');
+  const hint = document.getElementById('gateHint');
+  hint.textContent = '';
+
+  if(mode === 'login' || mode === 'signup'){
+    tabs.style.display = '';
+    emailField.style.display = '';
+    passField.style.display = '';
+    document.getElementById('gatePasswordLabel').textContent = 'Senha';
+    document.getElementById('gatePassword').setAttribute('autocomplete', mode === 'signup' ? 'new-password' : 'current-password');
+    submitBtn.textContent = mode === 'signup' ? 'Criar conta' : 'Entrar';
+    forgotLink.style.display = mode === 'login' ? '' : 'none';
+    backLink.style.display = 'none';
+    skipLink.style.display = '';
+  } else if(mode === 'forgot'){
+    tabs.style.display = 'none';
+    emailField.style.display = '';
+    passField.style.display = 'none';
+    submitBtn.textContent = 'Enviar link';
+    forgotLink.style.display = 'none';
+    backLink.style.display = '';
+    skipLink.style.display = '';
+    hint.textContent = 'Digite seu e-mail. Vamos enviar um link para redefinir a senha.';
+  } else if(mode === 'reset'){
+    tabs.style.display = 'none';
+    emailField.style.display = 'none';
+    passField.style.display = '';
+    document.getElementById('gatePasswordLabel').textContent = 'Nova senha';
+    document.getElementById('gatePassword').setAttribute('autocomplete', 'new-password');
+    submitBtn.textContent = 'Salvar nova senha';
+    forgotLink.style.display = 'none';
+    backLink.style.display = 'none';
+    skipLink.style.display = 'none';
+    hint.textContent = 'Defina sua nova senha para continuar.';
+  }
+}
+document.getElementById('gateTabs').addEventListener('click', function(e){
+  const btn = e.target.closest('.auth-gate-tab');
+  if(btn) setGateMode(btn.dataset.mode);
+});
+document.getElementById('gateForgotLink').addEventListener('click', function(){ setGateMode('forgot'); });
+document.getElementById('gateBackToLogin').addEventListener('click', function(){ setGateMode('login'); });
+document.getElementById('gateSkipLink').addEventListener('click', function(){
+  document.getElementById('authGate').style.display = 'none';
+});
+
+async function afterGateLogin(){
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('gateForm').reset();
+  await Backend.loadAll();
+  renderDashboard();
+  renderLibrary();
+  await refreshAccountView();
+  toast('Login feito.');
+}
+
+document.getElementById('gateForm').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  const hint = document.getElementById('gateHint');
+  if(!supabase){ hint.textContent = 'A conexão com a nuvem ainda não está pronta. Tente de novo em instantes.'; return; }
+  const email = document.getElementById('gateEmail').value.trim();
+  const password = document.getElementById('gatePassword').value;
+
+  if(gateMode === 'login'){
+    if(!email || !password){ hint.textContent = 'Preencha e-mail e senha.'; return; }
+    try{
+      const res = await supabase.auth.signInWithPassword({ email:email, password:password });
+      if(res.error){ hint.textContent = res.error.message; return; }
+      supaUser = res.data.user;
+      await afterGateLogin();
+    }catch(e){ hint.textContent = 'Não consegui entrar agora.'; }
+  } else if(gateMode === 'signup'){
+    if(!email || !password){ hint.textContent = 'Preencha e-mail e senha.'; return; }
+    try{
+      const res = await supabase.auth.signUp({ email:email, password:password });
+      if(res.error){ hint.textContent = res.error.message; return; }
+      hint.textContent = 'Conta criada. Confirme seu e-mail e entre em seguida.';
+    }catch(e){ hint.textContent = 'Não consegui criar a conta agora.'; }
+  } else if(gateMode === 'forgot'){
+    if(!email){ hint.textContent = 'Escreva seu e-mail.'; return; }
+    try{
+      const res = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+      if(res.error){ hint.textContent = res.error.message; return; }
+      hint.textContent = 'Link enviado. Confira seu e-mail.';
+    }catch(e){ hint.textContent = 'Não consegui enviar o link agora.'; }
+  } else if(gateMode === 'reset'){
+    if(!password || password.length < 6){ hint.textContent = 'A senha precisa ter ao menos 6 caracteres.'; return; }
+    try{
+      const res = await supabase.auth.updateUser({ password: password });
+      if(res.error){ hint.textContent = res.error.message; return; }
+      const userRes = await supabase.auth.getUser();
+      supaUser = userRes && userRes.data ? userRes.data.user : null;
+      await afterGateLogin();
+    }catch(e){ hint.textContent = 'Não consegui salvar a nova senha agora.'; }
+  }
+});
+
+function updateGateVisibility(){
+  const gate = document.getElementById('authGate');
+  if(supaConfig && supabase && !supaUser){
+    gate.style.display = 'flex';
+    if(gateMode !== 'reset') setGateMode('login');
+  } else {
+    gate.style.display = 'none';
+  }
+}
+document.getElementById('btnReopenGate').addEventListener('click', function(){
+  setGateMode('login');
+  document.getElementById('authGate').style.display = 'flex';
+});
+
 function unlockAdminMode(){
   adminModeUnlocked = true;
   toast('Modo administrador ativado. A conexão com o Supabase ficou visível nas Configurações.');
@@ -2412,7 +2615,7 @@ function unlockAdminMode(){
 }
 let brandClickCount = 0;
 let brandClickTimer = null;
-document.getElementById('brandMarkClickTarget').addEventListener('click', function(){
+function handleBrandClick(){
   brandClickCount++;
   clearTimeout(brandClickTimer);
   brandClickTimer = setTimeout(function(){ brandClickCount = 0; }, 1500);
@@ -2420,7 +2623,9 @@ document.getElementById('brandMarkClickTarget').addEventListener('click', functi
     brandClickCount = 0;
     unlockAdminMode();
   }
-});
+}
+document.getElementById('brandMarkClickTarget').addEventListener('click', handleBrandClick);
+document.getElementById('gateBrandClickTarget').addEventListener('click', handleBrandClick);
 
 function updateAccountBadge(){
   const badge = document.getElementById('accountBadge');
@@ -2473,41 +2678,19 @@ document.getElementById('btnSaveSupabaseConfig').addEventListener('click', async
   initSupabaseClient(url, key);
   await checkSupabaseSession();
   await refreshAccountView();
+  updateGateVisibility();
   toast('Configuração salva.');
 });
 document.getElementById('btnClearSupabaseConfig').addEventListener('click', function(){
-  confirmAction('Remover configuração', 'Isso desconecta o app do Supabase e volta ao modo local, apenas nesta conta do Claude. Seus dados na nuvem continuam existindo. Continuar?', async function(){
+  confirmAction('Remover configuração', 'Isso desconecta o app do Supabase e volta ao modo local, apenas neste navegador. Seus dados na nuvem continuam existindo. Continuar?', async function(){
     await clearSupabaseConfigStorage();
     supaConfig = null; supaUser = null; supabase = null;
     await Backend.loadAll();
     renderDashboard(); renderLibrary();
     await refreshAccountView();
+    updateGateVisibility();
     toast('Configuração removida.');
   });
-});
-document.getElementById('btnSignUp').addEventListener('click', async function(){
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  if(!email || !password){ toast('Preencha e-mail e senha.', true); return; }
-  try{
-    const res = await supabase.auth.signUp({ email:email, password:password });
-    if(res.error){ toast(res.error.message, true); return; }
-    toast('Conta criada. Confirme seu e-mail e entre em seguida.');
-  }catch(e){ toast('Não consegui criar a conta agora.', true); }
-});
-document.getElementById('btnSignIn').addEventListener('click', async function(){
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  if(!email || !password){ toast('Preencha e-mail e senha.', true); return; }
-  try{
-    const res = await supabase.auth.signInWithPassword({ email:email, password:password });
-    if(res.error){ toast(res.error.message, true); return; }
-    supaUser = res.data.user;
-    await Backend.loadAll();
-    renderDashboard(); renderLibrary();
-    await refreshAccountView();
-    toast('Login feito.');
-  }catch(e){ toast('Não consegui entrar agora.', true); }
 });
 document.getElementById('btnSignOutProfile').addEventListener('click', async function(){
   try{ await supabase.auth.signOut(); }catch(e){}
@@ -2515,6 +2698,7 @@ document.getElementById('btnSignOutProfile').addEventListener('click', async fun
   await Backend.loadAll();
   renderDashboard(); renderLibrary();
   await refreshAccountView();
+  updateGateVisibility();
   toast('Você saiu da conta.');
 });
 document.getElementById('btnChangeEmail').addEventListener('click', async function(){
@@ -2580,6 +2764,10 @@ async function init(){
   populateStaticOptions();
   applyTypeConfig(TYPES[0]);
   supaConfig = await loadSupabaseConfig();
+  if(!supaConfig && DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_KEY){
+    supaConfig = { url: DEFAULT_SUPABASE_URL, key: DEFAULT_SUPABASE_KEY };
+    await saveSupabaseConfig(supaConfig);
+  }
   if(supaConfig){
     initSupabaseClient(supaConfig.url, supaConfig.key);
     await checkSupabaseSession();
@@ -2588,6 +2776,7 @@ async function init(){
   renderDashboard();
   renderLibrary();
   await refreshAccountView();
+  updateGateVisibility();
 }
 init();
 
