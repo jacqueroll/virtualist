@@ -716,7 +716,7 @@
           <select id="heroSearchTypeFilter"></select>
         </div>
         <div id="heroSearchResults"></div>
-        <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para dorama, série, filme e jogo, adicione manualmente pela Biblioteca por enquanto.</p>
+        <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para jogo, adicione manualmente pela Biblioteca por enquanto.</p>
       </div>
 
       <div class="stat-row" id="statRow"></div>
@@ -862,6 +862,24 @@
         </div>
 
         <div class="panel">
+          <h3>Chave do TMDB</h3>
+          <p>Ativa a busca automática de filme, série e dorama (capa, título original, gêneros, autor/diretor e status da obra). Crie uma conta gratuita em themoviedb.org, vá em Configurações, API, e copie a "API Key (v3 auth)". Essa chave não é tão pública quanto a do Supabase, então evite compartilhar essa tela.</p>
+          <div id="tmdbKeySummary" style="display:none;">
+            <p>Chave configurada.</p>
+            <div class="panel-actions">
+              <button class="btn btn-ghost btn-sm" id="btnEditTmdbKey">Editar chave</button>
+              <button class="btn btn-ghost btn-sm" id="btnClearTmdbKey">Remover chave</button>
+            </div>
+          </div>
+          <div id="tmdbKeyForm">
+            <div class="field"><label>API Key (v3 auth)</label><input type="text" id="tmdbKeyInput" placeholder="chave do TMDB"></div>
+            <div class="panel-actions">
+              <button class="btn btn-primary" id="btnSaveTmdbKey">Salvar chave</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
           <h3>Sobre onde seus dados ficam</h3>
           <p id="storageExplainer" style="margin-bottom:0;">Carregando informação de armazenamento...</p>
         </div>
@@ -928,7 +946,7 @@
         <div id="coverPreviewWrap" style="margin-top:8px;display:none;">
           <img id="coverPreview" src="" alt="" style="max-height:120px;border-radius:8px;border:1px solid var(--line-strong);display:block;">
         </div>
-        <p class="hint" id="coverHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para dorama, série, filme e jogo, cole o link da capa por enquanto.</p>
+        <p class="hint" id="coverHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime, livro, filme, série e dorama (as três últimas dependem de uma chave do TMDB configurada nas Configurações). Para jogo, cole o link da capa por enquanto.</p>
       </div>
 
       <div class="field-row">
@@ -1481,16 +1499,24 @@ function applyTypeConfig(type){
   }
   const fetchBtn = document.getElementById('btnFetchCover');
   const source = COVER_SOURCE[type];
-  fetchBtn.disabled = !source;
-  fetchBtn.title = source ? '' : 'Busca automática ainda não disponível para essa categoria';
+  const available = coverSourceAvailable(type);
+  fetchBtn.disabled = !available;
+  fetchBtn.title = available ? '' : (source ? 'Configure a chave do TMDB nas Configurações (modo administrador)' : 'Busca automática ainda não disponível para essa categoria');
 }
 
 /* ---------------- cover art lookup ---------------- */
 const COVER_SOURCE = {
   'Mangá':'anilist-manga','Manhwa':'anilist-manga','Manhua':'anilist-manga',
   'Danmei (Novel)':'anilist-manga','Light Novel':'anilist-manga','Webtoon':'anilist-manga',
-  'Anime':'anilist-anime','Livro':'openlibrary'
+  'Anime':'anilist-anime','Livro':'openlibrary',
+  'Filme':'tmdb-movie','Série':'tmdb-tv','Dorama':'tmdb-tv'
 };
+function coverSourceAvailable(type){
+  const source = COVER_SOURCE[type];
+  if(!source) return false;
+  if(source === 'tmdb-movie' || source === 'tmdb-tv') return !!tmdbApiKey;
+  return true;
+}
 async function fetchCoverAniList(title, isAnimeType){
   const query = 'query($search:String){ Media(search:$search, type:'+(isAnimeType?'ANIME':'MANGA')+'){ coverImage{ large } } }';
   const res = await fetch('https://graphql.anilist.co', {
@@ -1512,6 +1538,11 @@ async function fetchCoverOpenLibrary(title){
   if(!doc || !doc.cover_i) throw new Error('not found');
   return 'https://covers.openlibrary.org/b/id/'+doc.cover_i+'-L.jpg';
 }
+async function fetchCoverTmdb(title, isTv){
+  const results = await searchTmdbCombined(title, !isTv, isTv);
+  if(!results.length || !results[0].coverUrl) throw new Error('not found');
+  return results[0].coverUrl;
+}
 function showCoverPreview(url){
   const wrap = document.getElementById('coverPreviewWrap');
   const img = document.getElementById('coverPreview');
@@ -1530,6 +1561,10 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
   const source = COVER_SOURCE[type];
   if(!title){ toast('Escreva o título antes de buscar a capa.', true); return; }
   if(!source){ toast('Busca automática ainda não disponível para essa categoria.', true); return; }
+  if((source === 'tmdb-movie' || source === 'tmdb-tv') && !tmdbApiKey){
+    toast('Configure a chave do TMDB nas Configurações (modo administrador) para buscar essa categoria.', true);
+    return;
+  }
   const btn = document.getElementById('btnFetchCover');
   const originalLabel = btn.textContent;
   btn.disabled = true; btn.textContent = 'Buscando...';
@@ -1538,6 +1573,8 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
     if(source === 'anilist-manga') url = await fetchCoverAniList(title, false);
     else if(source === 'anilist-anime') url = await fetchCoverAniList(title, true);
     else if(source === 'openlibrary') url = await fetchCoverOpenLibrary(title);
+    else if(source === 'tmdb-movie') url = await fetchCoverTmdb(title, false);
+    else if(source === 'tmdb-tv') url = await fetchCoverTmdb(title, true);
     document.getElementById('f_coverUrl').value = url;
     showCoverPreview(url);
     toast('Capa encontrada.');
@@ -1548,20 +1585,35 @@ document.getElementById('btnFetchCover').addEventListener('click', async functio
 });
 
 /* ---------------- hero search (busca e adiciona) ---------------- */
-const ANILIST_GENRE_MAP = {
+const GENRE_TRANSLATE_MAP = {
   'Action':'Ação','Adventure':'Aventura','Comedy':'Comédia','Drama':'Drama','Fantasy':'Fantasia',
   'Horror':'Horror','Mystery':'Mistério','Psychological':'Psicológico','Romance':'Romance',
-  'Sci-Fi':'Ficção Científica','Slice of Life':'Slice of Life','Sports':'Esportes',
+  'Sci-Fi':'Ficção Científica','Science Fiction':'Ficção Científica','Slice of Life':'Slice of Life','Sports':'Esportes',
   'Supernatural':'Sobrenatural','Thriller':'Suspense','Tragedy':'Tragédia','Ecchi':'Ecchi',
-  'Mecha':'Mecha','Music':'Musical','Historical':'Histórico'
+  'Mecha':'Mecha','Music':'Musical','Historical':'Histórico','History':'Histórico',
+  'Crime':'Policial','Family':'Família','War':'Guerra','War & Politics':'Guerra','Western':'Faroeste',
+  'Animation':'Animação','Documentary':'Documentário','Kids':'Infantil','Soap':'Novela',
+  'Talk':'Talk Show','News':'Notícias','Reality':'Reality Show',
+  'Action & Adventure':'Ação e Aventura','Sci-Fi & Fantasy':'Ficção Científica e Fantasia'
 };
 const ANILIST_STATUS_MAP = {
   'FINISHED':'Finalizado','RELEASING':'Em lançamento','NOT_YET_RELEASED':'Ainda não lançado',
   'CANCELLED':'Cancelado','HIATUS':'Em hiato'
 };
+const TMDB_STATUS_MAP = {
+  'Returning Series':'Em lançamento','Ended':'Finalizado','Canceled':'Cancelado',
+  'Released':'Finalizado','In Production':'Em produção','Post Production':'Em produção',
+  'Planned':'Ainda não lançado','Pilot':'Piloto'
+};
+const TMDB_MOVIE_GENRES = {28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10402:'Music',9648:'Mystery',10749:'Romance',878:'Science Fiction',10770:'TV Movie',53:'Thriller',10752:'War',37:'Western'};
+const TMDB_TV_GENRES = {10759:'Action & Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',10762:'Kids',9648:'Mystery',10763:'News',10764:'Reality',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',10768:'War & Politics',37:'Western'};
 const HERO_SEARCH_TYPES = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoon','Anime','Livro'];
 function mapAniListGenres(list){
-  return (list||[]).map(function(g){ return ANILIST_GENRE_MAP[g] || g; });
+  return (list||[]).map(function(g){ return GENRE_TRANSLATE_MAP[g] || g; });
+}
+function mapTmdbGenreIds(ids, isTv){
+  const table = isTv ? TMDB_TV_GENRES : TMDB_MOVIE_GENRES;
+  return (ids||[]).map(function(id){ const g = table[id]; return g ? (GENRE_TRANSLATE_MAP[g] || g) : null; }).filter(Boolean);
 }
 function guessMangaType(format, country){
   if(format === 'NOVEL') return (country === 'CN') ? 'Danmei (Novel)' : 'Light Novel';
@@ -1645,6 +1697,93 @@ async function searchOpenLibraryList(title){
     };
   });
 }
+
+/* TMDB: filme, série e dorama */
+let tmdbApiKey = null;
+function updateHeroSearchHint(){
+  const el = document.getElementById('heroSearchHint');
+  if(!el) return;
+  el.textContent = tmdbApiKey
+    ? 'Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime, livro, filme, série e dorama. Para jogo, adicione manualmente pela Biblioteca por enquanto.'
+    : 'Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para jogo, adicione manualmente pela Biblioteca por enquanto.';
+}
+async function loadTmdbKey(){
+  try{ const v = await appStorage.get('virtualist:tmdb-key'); return v || null; }catch(e){ return null; }
+}
+async function saveTmdbKey(key){ await appStorage.set('virtualist:tmdb-key', key); }
+async function clearTmdbKey(){ try{ await appStorage.remove('virtualist:tmdb-key'); }catch(e){} }
+
+async function searchTmdbCombined(title, onlyMovie, onlyTv){
+  if(!tmdbApiKey) return [];
+  const calls = [];
+  if(!onlyTv) calls.push(
+    fetch('https://api.themoviedb.org/3/search/movie?api_key='+encodeURIComponent(tmdbApiKey)+'&language=pt-BR&query='+encodeURIComponent(title))
+      .then(function(r){ return r.ok ? r.json() : {results:[]}; }).catch(function(){ return {results:[]}; })
+  );
+  if(!onlyMovie) calls.push(
+    fetch('https://api.themoviedb.org/3/search/tv?api_key='+encodeURIComponent(tmdbApiKey)+'&language=pt-BR&query='+encodeURIComponent(title))
+      .then(function(r){ return r.ok ? r.json() : {results:[]}; }).catch(function(){ return {results:[]}; })
+  );
+  const responses = await Promise.all(calls);
+  const out = [];
+  const movieJson = !onlyTv ? responses[0] : null;
+  const tvJson = onlyTv ? responses[0] : (responses[1] || null);
+  (movieJson && movieJson.results || []).slice(0,8).forEach(function(m){
+    out.push({
+      title: m.title || m.original_title || '',
+      originalTitle: m.original_title && m.original_title !== m.title ? m.original_title : '',
+      synonyms: [],
+      coverUrl: m.poster_path ? ('https://image.tmdb.org/t/p/w500'+m.poster_path) : '',
+      type: 'Filme',
+      genres: mapTmdbGenreIds(m.genre_ids, false),
+      link: 'https://www.themoviedb.org/movie/'+m.id,
+      author: '',
+      workStatus: '',
+      tmdbId: m.id,
+      tmdbKind: 'movie'
+    });
+  });
+  (tvJson && tvJson.results || []).slice(0,8).forEach(function(t){
+    const isKr = (t.origin_country||[]).indexOf('KR') !== -1;
+    out.push({
+      title: t.name || t.original_name || '',
+      originalTitle: t.original_name && t.original_name !== t.name ? t.original_name : '',
+      synonyms: [],
+      coverUrl: t.poster_path ? ('https://image.tmdb.org/t/p/w500'+t.poster_path) : '',
+      type: isKr ? 'Dorama' : 'Série',
+      genres: mapTmdbGenreIds(t.genre_ids, true),
+      link: 'https://www.themoviedb.org/tv/'+t.id,
+      author: '',
+      workStatus: '',
+      tmdbId: t.id,
+      tmdbKind: 'tv'
+    });
+  });
+  return out;
+}
+async function enrichTmdbResult(result){
+  if(!tmdbApiKey || !result.tmdbId) return result;
+  try{
+    if(result.tmdbKind === 'movie'){
+      const res = await fetch('https://api.themoviedb.org/3/movie/'+result.tmdbId+'?api_key='+encodeURIComponent(tmdbApiKey)+'&language=pt-BR&append_to_response=credits');
+      if(res.ok){
+        const data = await res.json();
+        const director = data.credits && data.credits.crew ? data.credits.crew.find(function(c){ return c.job === 'Director'; }) : null;
+        if(director) result.author = director.name;
+        if(data.status) result.workStatus = TMDB_STATUS_MAP[data.status] || data.status;
+      }
+    } else if(result.tmdbKind === 'tv'){
+      const res = await fetch('https://api.themoviedb.org/3/tv/'+result.tmdbId+'?api_key='+encodeURIComponent(tmdbApiKey)+'&language=pt-BR');
+      if(res.ok){
+        const data = await res.json();
+        if(data.created_by && data.created_by.length) result.author = data.created_by.map(function(c){ return c.name; }).join(', ');
+        if(data.status) result.workStatus = TMDB_STATUS_MAP[data.status] || data.status;
+      }
+    }
+  }catch(e){}
+  return result;
+}
+
 let heroSearchToken = 0;
 async function runHeroSearch(){
   const q = document.getElementById('heroSearchInput').value.trim();
@@ -1654,23 +1793,31 @@ async function runHeroSearch(){
   if(q.length < 2){ resultsBox.innerHTML = ''; return; }
 
   const mangaTypes = ['Mangá','Manhwa','Manhua','Danmei (Novel)','Light Novel','Webtoon'];
+  const tvTypes = ['Série','Dorama'];
   const wantsAniList = !typeFilter || typeFilter === 'Anime' || mangaTypes.indexOf(typeFilter) !== -1;
   const wantsBooks = !typeFilter || typeFilter === 'Livro';
-  if(typeFilter && !wantsAniList && !wantsBooks){
-    resultsBox.innerHTML = '<div class="hero-search-status">Busca automática ainda não disponível para essa categoria. Adicione manualmente pela Biblioteca.</div>';
+  const wantsTmdb = !!tmdbApiKey && (!typeFilter || typeFilter === 'Filme' || tvTypes.indexOf(typeFilter) !== -1);
+  if(typeFilter && !wantsAniList && !wantsBooks && !wantsTmdb){
+    const needsTmdb = typeFilter === 'Filme' || tvTypes.indexOf(typeFilter) !== -1;
+    resultsBox.innerHTML = needsTmdb
+      ? '<div class="hero-search-status">Busca automática para essa categoria depende de uma chave do TMDB, configurada nas Configurações pelo modo administrador. Adicione manualmente pela Biblioteca por enquanto.</div>'
+      : '<div class="hero-search-status">Busca automática ainda não disponível para essa categoria. Adicione manualmente pela Biblioteca.</div>';
     return;
   }
   const onlyAnime = typeFilter === 'Anime';
   const onlyManga = mangaTypes.indexOf(typeFilter) !== -1;
+  const onlyMovie = typeFilter === 'Filme';
+  const onlyTv = tvTypes.indexOf(typeFilter) !== -1;
 
   resultsBox.innerHTML = '<div class="hero-search-status">Buscando...</div>';
   try{
-    const [aniList, books] = await Promise.all([
+    const [aniList, books, tmdb] = await Promise.all([
       wantsAniList ? searchAniListCombined(q, onlyAnime, onlyManga).catch(function(){ return []; }) : Promise.resolve([]),
-      wantsBooks ? searchOpenLibraryList(q).catch(function(){ return []; }) : Promise.resolve([])
+      wantsBooks ? searchOpenLibraryList(q).catch(function(){ return []; }) : Promise.resolve([]),
+      wantsTmdb ? searchTmdbCombined(q, onlyMovie, onlyTv).catch(function(){ return []; }) : Promise.resolve([])
     ]);
     if(myToken !== heroSearchToken) return;
-    let combined = aniList.concat(books).filter(function(r){ return r.title; });
+    let combined = aniList.concat(books).concat(tmdb).filter(function(r){ return r.title; });
     if(typeFilter) combined = combined.filter(function(r){ return r.type === typeFilter; });
     if(!combined.length){
       resultsBox.innerHTML = '<div class="hero-search-status">Nenhum resultado encontrado. Você ainda pode adicionar manualmente pela Biblioteca.</div>';
@@ -1689,8 +1836,9 @@ async function runHeroSearch(){
         '<div class="hero-result-type">'+escapeHtml(r.type)+'</div>'+authorLine+altTitle+badge+'</div></button>';
     }).join('');
     resultsBox.querySelectorAll('.hero-result').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        const r = combined[Number(btn.dataset.idx)];
+      btn.addEventListener('click', async function(){
+        let r = combined[Number(btn.dataset.idx)];
+        if(r.tmdbId){ btn.style.opacity='.6'; r = await enrichTmdbResult(r); btn.style.opacity=''; }
         openEntryModal(null);
         document.getElementById('f_title').value = r.title || '';
         document.getElementById('f_originalTitle').value = r.originalTitle || '';
@@ -2454,8 +2602,21 @@ async function checkSupabaseSession(){
 }
 
 let configFormExpanded = false;
-
+let tmdbFormExpanded = false;
 let adminModeUnlocked = false;
+
+function refreshTmdbKeyView(){
+  const summary = document.getElementById('tmdbKeySummary');
+  const form = document.getElementById('tmdbKeyForm');
+  if(tmdbApiKey && !tmdbFormExpanded){
+    summary.style.display = '';
+    form.style.display = 'none';
+  } else {
+    summary.style.display = 'none';
+    form.style.display = '';
+    document.getElementById('tmdbKeyInput').value = tmdbApiKey || '';
+  }
+}
 
 async function refreshAccountView(){
   const summary = document.getElementById('supabaseConfigSummary');
@@ -2465,6 +2626,7 @@ async function refreshAccountView(){
   const cardProfile = document.getElementById('cardProfile');
   updateStorageExplainer();
   updateAccountBadge();
+  refreshTmdbKeyView();
 
   if(!supaConfig){
     // primeira configuração ainda não feita: mostra só a conexão técnica
@@ -2630,6 +2792,31 @@ document.getElementById('btnReopenGate').addEventListener('click', function(){
   document.getElementById('authGate').style.display = 'flex';
 });
 
+document.getElementById('btnSaveTmdbKey').addEventListener('click', async function(){
+  const key = document.getElementById('tmdbKeyInput').value.trim();
+  if(!key){ toast('Cole a chave do TMDB para continuar.', true); return; }
+  tmdbApiKey = key;
+  await saveTmdbKey(key);
+  tmdbFormExpanded = false;
+  refreshTmdbKeyView();
+  updateHeroSearchHint();
+  toast('Chave do TMDB salva.');
+});
+document.getElementById('btnEditTmdbKey').addEventListener('click', function(){
+  tmdbFormExpanded = true;
+  refreshTmdbKeyView();
+});
+document.getElementById('btnClearTmdbKey').addEventListener('click', function(){
+  confirmAction('Remover chave do TMDB', 'A busca automática de filme, série e dorama para de funcionar até você configurar outra chave. Continuar?', async function(){
+    await clearTmdbKey();
+    tmdbApiKey = null;
+    tmdbFormExpanded = false;
+    refreshTmdbKeyView();
+    updateHeroSearchHint();
+    toast('Chave removida.');
+  });
+});
+
 function unlockAdminMode(){
   adminModeUnlocked = true;
   toast('Modo administrador ativado. A conexão com o Supabase ficou visível nas Configurações.');
@@ -2784,6 +2971,8 @@ async function init(){
   currentTheme = await loadTheme();
   applyTheme(currentTheme);
   populateStaticOptions();
+  tmdbApiKey = await loadTmdbKey();
+  updateHeroSearchHint();
   applyTypeConfig(TYPES[0]);
   supaConfig = await loadSupabaseConfig();
   if(!supaConfig && DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_KEY){
