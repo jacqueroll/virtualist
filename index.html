@@ -2,10 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){
+  var h = window.location.hostname;
+  if(h.indexOf('vercel.app') !== -1){
+    window.location.replace('https://www.virtualist.com.br' + window.location.pathname + window.location.search);
+  }
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Virtualist</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjM2IiBmaWxsPSIjRjhGOEZGIi8+CiAgPGcgc3Ryb2tlPSIjMTkxOTcwIiBzdHJva2Utd2lkdGg9IjExIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBmaWxsPSJub25lIj4KICAgIDxwYXRoIGQ9Ik00MCw4MCBMNDAsNDAgTDgwLDQwIiAvPgogICAgPHBhdGggZD0iTTEyMCw0MCBMMTYwLDQwIEwxNjAsODAiIC8+CiAgICA8cGF0aCBkPSJNNDAsMTIwIEw0MCwxNjAgTDgwLDE2MCIgLz4KICAgIDxwYXRoIGQ9Ik0xNjAsMTIwIEwxNjAsMTYwIEwxMjAsMTYwIiAvPgogIDwvZz4KICA8ZyBzdHJva2U9IiM2QTVBQ0QiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSI+CiAgICA8bGluZSB4MT0iMTAwIiB5MT0iMTAwIiB4Mj0iNzQiIHkyPSI3OCIgLz4KICAgIDxsaW5lIHgxPSIxMDAiIHkxPSIxMDAiIHgyPSIxMjciIHkyPSI4MSIgLz4KICAgIDxsaW5lIHgxPSIxMDAiIHkxPSIxMDAiIHgyPSI4NCIgeTI9IjEyOSIgLz4KICAgIDxsaW5lIHgxPSIxMDAiIHkxPSIxMDAiIHgyPSIxMjQiIHkyPSIxMjMiIC8+CiAgPC9nPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iMTEiIGZpbGw9IiMxOTE5NzAiIC8+CiAgPGNpcmNsZSBjeD0iNzQiIGN5PSI3OCIgcj0iNyIgZmlsbD0iIzgzNkZGRiIgLz4KICA8Y2lyY2xlIGN4PSIxMjciIGN5PSI4MSIgcj0iNiIgZmlsbD0iIzZBNUFDRCIgLz4KICA8Y2lyY2xlIGN4PSI4NCIgY3k9IjEyOSIgcj0iNiIgZmlsbD0iIzZBNUFDRCIgLz4KICA8Y2lyY2xlIGN4PSIxMjQiIGN5PSIxMjMiIHI9IjciIGZpbGw9IiM4MzZGRkYiIC8+Cjwvc3ZnPgo=">
-<meta name="description" content="Virtualist: mangás, manhwas, manhuas, danmeis, light novels, livros, animes, doramas, séries, filmes e jogos, organizados num só lugar.">
+<meta name="description" content="Virtualist: biblioteca pessoal com mangás, manhwas, manhuas, danmeis, light novels, visual novels, livros, animes, doramas, séries, filmes e jogos, tudo num só lugar.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
@@ -206,6 +214,29 @@
   .mini-sub{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
   .empty-note{color:var(--muted);font-size:13.5px;padding:18px;text-align:center;}
 
+  /* dashboard: goals, categories, charts */
+  #dashboardYearFilter,#dashboardMonthFilter{padding:6px 8px;border:1px solid var(--line-strong);border-radius:8px;background:var(--white);color:var(--navy);font-size:12.5px;}
+  .goal-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .goal-row:last-child{margin-bottom:0;}
+  .goal-row .goal-label{width:120px;flex-shrink:0;font-size:13px;font-weight:600;color:var(--navy);}
+  .goal-row .goal-track{flex:1;background:var(--surface-alt);border-radius:6px;height:16px;overflow:hidden;}
+  .goal-row .goal-fill{height:100%;background:var(--navy);border-radius:6px;}
+  .goal-row .goal-nums{font-size:12px;color:var(--muted);width:64px;text-align:right;flex-shrink:0;}
+  .goal-row .goal-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;flex-shrink:0;padding:0 2px;}
+  .goal-add-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+  .goal-add-row select,.goal-add-row input{padding:8px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--white);color:var(--navy);font-size:13px;}
+  .goal-add-row input[type=number]{width:90px;}
+  .cat-active-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
+  .cat-active-card{background:var(--surface-alt);border-radius:10px;padding:10px 12px;}
+  .cat-active-card .num{font-size:20px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;}
+  .cat-active-card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+  .bar-chart-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12.5px;}
+  .bar-chart-row:last-child{margin-bottom:0;}
+  .bar-chart-label{width:76px;flex-shrink:0;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bar-chart-track{flex:1;background:var(--surface-alt);border-radius:6px;height:13px;overflow:hidden;}
+  .bar-chart-fill{height:100%;background:var(--slate);border-radius:6px;}
+  .bar-chart-count{width:24px;text-align:right;color:var(--muted);flex-shrink:0;}
+
   /* library */
   .toolbar{
     display:flex;
@@ -352,6 +383,8 @@
   }
   .field textarea{resize:vertical;min-height:70px;}
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .partial-date-row{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:6px;}
+  .partial-date-row select,.partial-date-row input{width:100%;padding:9px 6px;border:1px solid var(--line-strong);border-radius:8px;background:var(--white);color:var(--navy);font-size:13px;}
   .hint{font-size:11.5px;color:var(--muted);margin-top:4px;}
 
   .star-input{display:flex;gap:2px;font-size:24px;color:var(--line-strong);cursor:pointer;user-select:none;}
@@ -626,7 +659,7 @@
       </svg>
       <span>Virtualist</span>
     </div>
-    <p class="auth-gate-tagline">Mangás, manhwas, manhuas, danmeis, light novels, livros, animes, doramas, séries, filmes e jogos, num só lugar.</p>
+    <p class="auth-gate-tagline">Biblioteca pessoal com mangás, manhwas, manhuas, danmeis, light novels, visual novels, livros, animes, doramas, séries, filmes e jogos, tudo num só lugar.</p>
 
     <div class="auth-gate-tabs" id="gateTabs">
       <button type="button" class="auth-gate-tab active" data-mode="login">Login</button>
@@ -694,7 +727,7 @@
       </span>
       <div>
         <h1>Virtualist</h1>
-        <p>Mangás, manhwas, manhuas, danmeis, light novels, livros, animes, doramas, séries, filmes e jogos, num só lugar.</p>
+        <p>Biblioteca pessoal com mangás, manhwas, manhuas, danmeis, light novels, visual novels, livros, animes, doramas, séries, filmes e jogos, tudo num só lugar.</p>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
@@ -738,10 +771,33 @@
 
       <div class="stat-row" id="statRow"></div>
 
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <span>Metas pessoais</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select id="dashboardYearFilter"></select>
+          <select id="dashboardMonthFilter"></select>
+        </div>
+      </div>
+      <div class="panel" id="goalsPanel"></div>
+
+      <div class="section-title">Categorias ativas</div>
+      <div class="panel" id="activeCategoriesPanel"></div>
+
+      <div class="stat-row" style="align-items:stretch;">
+        <div class="panel" style="flex:1;min-width:260px;">
+          <h3 style="margin:0 0 12px;font-size:15px;">Notas que você deu</h3>
+          <div id="ratingsChart"></div>
+        </div>
+        <div class="panel" style="flex:1;min-width:260px;">
+          <h3 style="margin:0 0 12px;font-size:15px;">Gêneros mais consumidos</h3>
+          <div id="genresChart"></div>
+        </div>
+      </div>
+
       <div class="section-title">Em andamento</div>
       <div class="mini-list" id="readingNowList"></div>
 
-      <div class="section-title">Adicionados recentemente</div>
+      <div class="section-title">Atividade recente</div>
       <div class="mini-list" id="recentList"></div>
     </section>
 
@@ -1063,13 +1119,22 @@
       <div class="field-row">
         <div class="field">
           <label>Data de início</label>
-          <input type="date" id="f_startDate">
+          <div class="partial-date-row">
+            <select id="f_startDay"></select>
+            <select id="f_startMonth"></select>
+            <input type="number" id="f_startYear" placeholder="Ano" min="1900" max="2100">
+          </div>
         </div>
         <div class="field">
           <label>Data de término</label>
-          <input type="date" id="f_endDate">
+          <div class="partial-date-row">
+            <select id="f_endDay"></select>
+            <select id="f_endMonth"></select>
+            <input type="number" id="f_endYear" placeholder="Ano" min="1900" max="2100">
+          </div>
         </div>
       </div>
+      <p class="hint" style="margin-top:-8px;margin-bottom:14px;">Preencha só o que lembrar. Ano sozinho já ajuda no acompanhamento das metas no Painel.</p>
 
       <div class="field-row">
         <div class="field">
@@ -1257,6 +1322,9 @@ const customAuthStorage = {
 /* ---------------- state ---------------- */
 let state = {
   entries: [],
+  goals: [],
+  dashboardYear: new Date().getFullYear(),
+  dashboardMonth: '',
   editingId: null,
   filters: { search:'', type:'', status:'', genre:'', sort:'updated_desc' },
   currentGenreTags: [],
@@ -1527,6 +1595,56 @@ const Backend = {
   }
 };
 
+/* ---------------- goals backend (metas pessoais) ---------------- */
+function mapGoalToRow(g){
+  return { id: g.id, year: g.year, category: g.category, target: g.target, date_updated: todayIso() };
+}
+function mapRowToGoal(row){
+  return { id: row.id, year: row.year, category: row.category, target: row.target };
+}
+const GoalsBackend = {
+  async loadAll(){
+    if(remoteMode()){
+      try{
+        const res = await supabase.from('virtualist_goals').select('*').order('year', {ascending:false});
+        if(res.error) throw res.error;
+        state.goals = (res.data || []).map(mapRowToGoal);
+      }catch(e){ console.error(e); state.goals = []; }
+      return;
+    }
+    try{
+      const value = await appStorage.get('virtualist:goals');
+      state.goals = value ? JSON.parse(value) : [];
+    }catch(e){ state.goals = []; }
+  },
+  async persistLocal(){ await appStorage.set('virtualist:goals', JSON.stringify(state.goals)); },
+  async upsert(goal){
+    if(remoteMode()){
+      try{
+        const row = mapGoalToRow(goal);
+        if(!goal.id) delete row.id;
+        const res = await supabase.from('virtualist_goals').upsert(row, {onConflict:'user_id,year,category'}).select().single();
+        if(res.error) throw res.error;
+        goal.id = res.data.id;
+      }catch(e){ console.error(e); toast('Não consegui salvar a meta na nuvem.', true); }
+      return;
+    }
+    if(!goal.id) goal.id = uid();
+    await GoalsBackend.persistLocal();
+  },
+  async remove(id){
+    state.goals = state.goals.filter(function(g){ return g.id !== id; });
+    if(remoteMode()){
+      try{
+        const res = await supabase.from('virtualist_goals').delete().eq('id', id);
+        if(res.error) throw res.error;
+      }catch(e){ console.error(e); toast('Não consegui remover a meta na nuvem.', true); }
+      return;
+    }
+    await GoalsBackend.persistLocal();
+  }
+};
+
 function updateStorageExplainer(){
   const el = document.getElementById('storageExplainer');
   if(remoteMode()){
@@ -1558,6 +1676,58 @@ function populateStaticOptions(){
   PLATFORM_SUGGESTIONS.forEach(function(p){ platformList.innerHTML += '<option value="'+escapeHtml(p)+'">'; });
   document.getElementById('f_type').addEventListener('change', function(ev){ applyTypeConfig(ev.target.value); });
   populateHeroSearchTypeFilter();
+  populatePartialDateSelects();
+}
+
+/* ---------------- partial dates (dia/mês/ano opcionais) ---------------- */
+const MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function populatePartialDateSelects(){
+  ['f_startDay','f_endDay'].forEach(function(id){
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">Dia</option>';
+    for(let d=1; d<=31; d++){ sel.innerHTML += '<option value="'+d+'">'+d+'</option>'; }
+  });
+  ['f_startMonth','f_endMonth'].forEach(function(id){
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">Mês</option>';
+    MONTH_NAMES.forEach(function(name, idx){ sel.innerHTML += '<option value="'+(idx+1)+'">'+name+'</option>'; });
+  });
+}
+function combinePartialDate(day, month, year){
+  year = String(year||'').trim();
+  month = String(month||'').trim();
+  day = String(day||'').trim();
+  if(!year) return '';
+  if(!month) return year;
+  const mm = month.padStart(2,'0');
+  if(!day) return year+'-'+mm;
+  return year+'-'+mm+'-'+day.padStart(2,'0');
+}
+function splitPartialDate(value){
+  if(!value) return {day:'', month:'', year:''};
+  const parts = String(value).split('-');
+  return { year: parts[0]||'', month: parts[1] ? String(parseInt(parts[1],10)) : '', day: parts[2] ? String(parseInt(parts[2],10)) : '' };
+}
+function fillPartialDateFields(prefix, value){
+  const p = splitPartialDate(value);
+  document.getElementById(prefix+'Year').value = p.year;
+  document.getElementById(prefix+'Month').value = p.month;
+  document.getElementById(prefix+'Day').value = p.day;
+}
+function readPartialDateFields(prefix){
+  return combinePartialDate(
+    document.getElementById(prefix+'Day').value,
+    document.getElementById(prefix+'Month').value,
+    document.getElementById(prefix+'Year').value
+  );
+}
+function partialDateLabel(value){
+  const p = splitPartialDate(value);
+  if(!p.year) return '';
+  if(!p.month) return p.year;
+  const name = MONTH_NAMES[parseInt(p.month,10)-1];
+  if(!p.day) return name+'/'+p.year;
+  return p.day+' '+name+'/'+p.year;
 }
 
 function applyTypeConfig(type){
@@ -2125,6 +2295,154 @@ function renderDashboard(){
     '<div class="empty-note">Seu acervo está vazio. Adicione um item ou importe uma lista existente.</div>';
 
   attachMiniRowClicks();
+  populateDashboardFilters();
+  renderActiveCategories();
+  renderGoalsPanel();
+  renderRatingsChart();
+  renderGenresChart();
+}
+
+/* ---------------- painel: filtro de ano/mês ---------------- */
+function entryYear(e){
+  const src = e.endDate || e.dateAdded || '';
+  const y = String(src).slice(0,4);
+  return /^\d{4}$/.test(y) ? y : '';
+}
+function entryMonth(e){
+  const src = e.endDate || '';
+  const parts = String(src).split('-');
+  return parts[1] ? parts[1] : '';
+}
+function populateDashboardFilters(){
+  const yearSel = document.getElementById('dashboardYearFilter');
+  const monthSel = document.getElementById('dashboardMonthFilter');
+  if(!yearSel || yearSel.dataset.built) {
+    if(yearSel) yearSel.value = String(state.dashboardYear);
+    if(monthSel) monthSel.value = state.dashboardMonth;
+    return;
+  }
+  const years = new Set([String(new Date().getFullYear())]);
+  state.entries.forEach(function(e){ const y = entryYear(e); if(y) years.add(y); });
+  const sortedYears = Array.from(years).sort(function(a,b){ return b-a; });
+  yearSel.innerHTML = sortedYears.map(function(y){ return '<option value="'+y+'">'+y+'</option>'; }).join('');
+  yearSel.value = String(state.dashboardYear);
+  monthSel.innerHTML = '<option value="">Ano todo</option>' + MONTH_NAMES.map(function(name, idx){
+    const mm = String(idx+1).padStart(2,'0');
+    return '<option value="'+mm+'">'+name+'</option>';
+  }).join('');
+  monthSel.value = state.dashboardMonth;
+  yearSel.dataset.built = '1';
+  yearSel.addEventListener('change', function(){ state.dashboardYear = Number(yearSel.value); renderGoalsPanel(); });
+  monthSel.addEventListener('change', function(){ state.dashboardMonth = monthSel.value; renderGoalsPanel(); });
+}
+
+/* ---------------- painel: categorias ativas ---------------- */
+function renderActiveCategories(){
+  const el = document.getElementById('activeCategoriesPanel');
+  const counts = {};
+  state.entries.forEach(function(e){
+    if(ONGOING_STATUSES.indexOf(e.status) === -1) return;
+    counts[e.type] = (counts[e.type]||0) + 1;
+  });
+  const rows = Object.keys(counts).map(function(t){ return {type:t, count:counts[t]}; })
+    .sort(function(a,b){ return b.count - a.count; });
+  if(!rows.length){
+    el.innerHTML = '<p style="margin:0;color:var(--muted);font-size:13.5px;">Nenhuma categoria em andamento agora.</p>';
+    return;
+  }
+  el.innerHTML = '<div class="cat-active-grid">' + rows.map(function(r){
+    return '<div class="cat-active-card"><div class="num">'+r.count+'</div><div class="label">'+escapeHtml(r.type)+'</div></div>';
+  }).join('') + '</div>';
+}
+
+/* ---------------- painel: metas pessoais ---------------- */
+function renderGoalsPanel(){
+  const el = document.getElementById('goalsPanel');
+  const year = state.dashboardYear;
+  const month = state.dashboardMonth;
+  const yearGoals = state.goals.filter(function(g){ return g.year === year; });
+
+  function progressFor(category){
+    return state.entries.filter(function(e){
+      if(e.status !== 'Completo') return false;
+      if(category !== 'Qualquer categoria' && e.type !== category) return false;
+      if(entryYear(e) !== String(year)) return false;
+      if(month && entryMonth(e) !== month) return false;
+      return true;
+    }).length;
+  }
+
+  let html = '';
+  if(!yearGoals.length){
+    html += '<p style="margin:0 0 6px;color:var(--muted);font-size:13.5px;">Nenhuma meta definida para '+year+' ainda.</p>';
+  } else {
+    yearGoals.forEach(function(g){
+      const done = progressFor(g.category);
+      const pct = Math.min(100, Math.round((done / g.target) * 100));
+      html += '<div class="goal-row">' +
+        '<div class="goal-label">'+escapeHtml(g.category)+'</div>' +
+        '<div class="goal-track"><div class="goal-fill" style="width:'+pct+'%;"></div></div>' +
+        '<div class="goal-nums">'+done+' / '+g.target+'</div>' +
+        '<button type="button" class="goal-remove" data-id="'+g.id+'" title="Remover meta">×</button>' +
+      '</div>';
+    });
+  }
+  html += '<div class="goal-add-row">' +
+    '<select id="goalCategoryInput"><option value="Qualquer categoria">Qualquer categoria</option>' + TYPES.map(function(t){ return '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>'; }).join('') + '</select>' +
+    '<input type="number" id="goalTargetInput" min="1" placeholder="Meta (ex: 24)">' +
+    '<button type="button" class="btn btn-sm btn-primary" id="btnAddGoal">Adicionar meta para '+year+'</button>' +
+  '</div>';
+  el.innerHTML = html;
+
+  el.querySelectorAll('.goal-remove').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      await GoalsBackend.remove(btn.dataset.id);
+      renderGoalsPanel();
+    });
+  });
+  document.getElementById('btnAddGoal').addEventListener('click', async function(){
+    const category = document.getElementById('goalCategoryInput').value;
+    const target = parseInt(document.getElementById('goalTargetInput').value, 10);
+    if(!target || target < 1){ toast('Escreva um número de meta válido.', true); return; }
+    const existing = state.goals.find(function(g){ return g.year === year && g.category === category; });
+    if(existing){
+      existing.target = target;
+      await GoalsBackend.upsert(existing);
+    } else {
+      const goal = { year: year, category: category, target: target };
+      state.goals.push(goal);
+      await GoalsBackend.upsert(goal);
+    }
+    renderGoalsPanel();
+  });
+}
+
+/* ---------------- painel: gráficos simples (notas e gêneros) ---------------- */
+function renderBarChart(elId, rows, emptyMsg){
+  const el = document.getElementById(elId);
+  if(!rows.length){ el.innerHTML = '<p style="margin:0;color:var(--muted);font-size:13px;">'+emptyMsg+'</p>'; return; }
+  const max = Math.max.apply(null, rows.map(function(r){ return r.count; }));
+  el.innerHTML = rows.map(function(r){
+    const pct = max ? Math.round((r.count / max) * 100) : 0;
+    return '<div class="bar-chart-row">' +
+      '<div class="bar-chart-label" title="'+escapeHtml(r.label)+'">'+escapeHtml(r.label)+'</div>' +
+      '<div class="bar-chart-track"><div class="bar-chart-fill" style="width:'+pct+'%;"></div></div>' +
+      '<div class="bar-chart-count">'+r.count+'</div>' +
+    '</div>';
+  }).join('');
+}
+function renderRatingsChart(){
+  const counts = {1:0,2:0,3:0,4:0,5:0};
+  state.entries.forEach(function(e){ if(e.rating && counts[e.rating] !== undefined) counts[e.rating]++; });
+  const rows = [5,4,3,2,1].map(function(n){ return {label: n+' estrela'+(n>1?'s':''), count: counts[n]}; });
+  renderBarChart('ratingsChart', rows, 'Nenhuma nota dada ainda.');
+}
+function renderGenresChart(){
+  const counts = {};
+  state.entries.forEach(function(e){ (e.genres||[]).forEach(function(g){ counts[g] = (counts[g]||0) + 1; }); });
+  const rows = Object.keys(counts).map(function(g){ return {label:g, count:counts[g]}; })
+    .sort(function(a,b){ return b.count - a.count; }).slice(0,8);
+  renderBarChart('genresChart', rows, 'Adicione gêneros aos seus itens para ver essa lista.');
 }
 
 function miniRowHtml(e){
@@ -2364,8 +2682,8 @@ function openEntryModal(id){
   document.getElementById('f_progressTotal').value = e && e.progressTotal!=null ? e.progressTotal : '';
   document.getElementById('f_subCurrent').value = e && e.subCurrent!=null ? e.subCurrent : '';
   document.getElementById('f_subTotal').value = e && e.subTotal!=null ? e.subTotal : '';
-  document.getElementById('f_startDate').value = e ? (e.startDate||'') : '';
-  document.getElementById('f_endDate').value = e ? (e.endDate||'') : '';
+  fillPartialDateFields('f_start', e ? (e.startDate||'') : '');
+  fillPartialDateFields('f_end', e ? (e.endDate||'') : '');
   document.getElementById('f_platform').value = e ? e.platform||'' : '';
   document.getElementById('f_link').value = e ? e.link||'' : '';
   document.getElementById('f_favorite').checked = e ? !!e.favorite : false;
@@ -2413,8 +2731,8 @@ document.getElementById('entryForm').addEventListener('submit', async function(e
     progressTotal: numOrNull(document.getElementById('f_progressTotal').value),
     subCurrent: numOrNull(document.getElementById('f_subCurrent').value),
     subTotal: numOrNull(document.getElementById('f_subTotal').value),
-    startDate: document.getElementById('f_startDate').value,
-    endDate: document.getElementById('f_endDate').value,
+    startDate: readPartialDateFields('f_start'),
+    endDate: readPartialDateFields('f_end'),
     platform: document.getElementById('f_platform').value.trim(),
     link: document.getElementById('f_link').value.trim(),
     favorite: document.getElementById('f_favorite').checked,
@@ -2679,6 +2997,10 @@ function parseMalXml(text){
   showImportPreview(entries, 'MyAnimeList (.xml)');
 }
 function cleanMalDate(v){ return (!v || v === '0000-00-00') ? '' : v; }
+function normalizeSlashDate(v){
+  if(!v) return '';
+  return String(v).trim().replace(/\//g, '-');
+}
 
 /* CSV: detect Goodreads vs generic */
 function parseCsvSmart(text){
@@ -2703,7 +3025,7 @@ function parseGoodreadsRows(rows){
       status: shelfMap[r['Exclusive Shelf']] || 'Quero ler',
       rating: (my && my > 0) ? Math.round(my) : null,
       progressTotal: numOrNullStr(r['Number of Pages']),
-      endDate: r['Date Read'] || '',
+      endDate: normalizeSlashDate(r['Date Read']),
       startDate: '',
       genres: r['Bookshelves'] ? r['Bookshelves'].split(',').map(function(s){return s.trim();}).filter(function(s){ return s && s!=='read' && s!=='to-read' && s!=='currently-reading'; }) : [],
       notes: r['My Review'] || '',
@@ -3011,6 +3333,7 @@ async function afterGateLogin(){
   document.getElementById('authGate').style.display = 'none';
   document.getElementById('gateForm').reset();
   await Backend.loadAll();
+  await GoalsBackend.loadAll();
   renderDashboard();
   renderLibrary();
   await refreshAccountView();
@@ -3247,6 +3570,7 @@ document.getElementById('btnClearSupabaseConfig').addEventListener('click', func
     await clearSupabaseConfigStorage();
     supaConfig = null; supaUser = null; supabase = null;
     await Backend.loadAll();
+    await GoalsBackend.loadAll();
     renderDashboard(); renderLibrary();
     await refreshAccountView();
     updateGateVisibility();
@@ -3257,6 +3581,7 @@ document.getElementById('btnSignOutProfile').addEventListener('click', async fun
   try{ await supabase.auth.signOut(); }catch(e){}
   supaUser = null;
   await Backend.loadAll();
+  await GoalsBackend.loadAll();
   renderDashboard(); renderLibrary();
   await refreshAccountView();
   updateGateVisibility();
@@ -3345,6 +3670,7 @@ async function init(){
     await checkSupabaseSession();
   }
   await Backend.loadAll();
+  await GoalsBackend.loadAll();
   renderDashboard();
   renderLibrary();
   await refreshAccountView();
