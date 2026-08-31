@@ -237,6 +237,54 @@
   .bar-chart-fill{height:100%;background:var(--slate);border-radius:6px;}
   .bar-chart-count{width:24px;text-align:right;color:var(--muted);flex-shrink:0;}
 
+  /* diary */
+  .diary-entry{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px;}
+  .diary-entry-date{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);margin-bottom:6px;}
+  .diary-entry-content{font-size:14px;color:var(--navy);white-space:pre-wrap;line-height:1.5;}
+  .diary-entry-actions{margin-top:8px;text-align:right;}
+
+  /* notifications */
+  .notif-wrap{position:relative;}
+  .notif-badge{position:absolute;top:-4px;right:-4px;background:var(--black);color:var(--ghost);font-size:10px;font-weight:700;border-radius:999px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+  .notif-panel{position:absolute;top:calc(100% + 8px);right:0;width:300px;max-height:360px;overflow-y:auto;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:0 12px 32px rgba(0,0,0,.18);z-index:60;display:none;}
+  .notif-panel.show{display:block;}
+  .notif-panel-header{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700;color:var(--navy);}
+  .notif-item{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12.5px;}
+  .notif-item:last-child{border-bottom:none;}
+  .notif-item:hover{background:var(--surface-alt);}
+  .notif-item .notif-title{font-weight:600;color:var(--navy);}
+  .notif-item .notif-msg{color:var(--muted);margin-top:2px;}
+  .notif-empty{padding:16px;text-align:center;color:var(--muted);font-size:12.5px;}
+
+  /* social links row in profile panel */
+  .social-links-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  /* view toggle (grade / lista) */
+  .view-toggle{display:flex;gap:2px;background:var(--surface-alt);border-radius:8px;padding:3px;}
+  .view-toggle button{background:none;border:none;padding:7px 10px;border-radius:6px;cursor:pointer;color:var(--muted);display:flex;align-items:center;}
+  .view-toggle button.active{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .view-toggle button:hover{color:var(--navy);}
+
+  /* list view */
+  .list-view{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--surface);}
+  .list-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);}
+  .list-row:last-child{border-bottom:none;}
+  .list-row:hover{background:var(--surface-alt);}
+  .list-row-cover{width:38px;height:56px;border-radius:6px;overflow:hidden;background:var(--surface-alt);flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;}
+  .list-row-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .list-row-cover .entry-cover-fallback{font-size:7px;}
+  .list-row-body{flex:1;min-width:0;}
+  .list-row-title{font-weight:700;color:var(--navy);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .list-row-meta{font-size:11.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .list-row-extra{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  .list-row-fav{background:none;border:none;cursor:pointer;font-size:16px;color:var(--line-strong);padding:0;line-height:1;flex-shrink:0;}
+  .list-row-fav.active{color:var(--lilac);}
+
+  /* share row (perfil público) */
+  .share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .share-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid var(--line-strong);background:var(--white);color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none;}
+  .share-btn:hover{border-color:var(--slate);}
+
   /* library */
   .toolbar{
     display:flex;
@@ -635,6 +683,41 @@
 </head>
 <body>
 
+<div id="publicProfileView" style="display:none;">
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg width="32" height="32" viewBox="0 0 200 200" aria-hidden="true">
+            <g stroke="#191970" stroke-width="9" stroke-linecap="square" fill="none">
+              <path d="M30,70 L30,30 L70,30" /><path d="M130,30 L170,30 L170,70" />
+              <path d="M30,130 L30,170 L70,170" /><path d="M170,130 L170,170 L130,170" />
+            </g>
+            <g stroke="#6A5ACD" stroke-width="2.5" fill="none">
+              <line x1="100" y1="100" x2="72" y2="76" /><line x1="100" y1="100" x2="129" y2="79" />
+              <line x1="100" y1="100" x2="83" y2="131" /><line x1="100" y1="100" x2="126" y2="124" />
+            </g>
+            <circle cx="100" cy="100" r="10" fill="#191970" /><circle cx="72" cy="76" r="6" fill="#836FFF" />
+            <circle cx="129" cy="79" r="5" fill="#6A5ACD" /><circle cx="83" cy="131" r="5" fill="#6A5ACD" />
+            <circle cx="126" cy="124" r="6" fill="#836FFF" />
+          </svg>
+        </span>
+        <div>
+          <h1>Virtualist</h1>
+          <p>Perfil público</p>
+        </div>
+      </div>
+      <a class="btn btn-ghost btn-sm" href="/" id="publicViewBackLink">Ir para o Virtualist</a>
+    </div>
+  </header>
+  <div class="app-shell">
+    <main>
+      <div id="publicProfileContent"></div>
+    </main>
+  </div>
+</div>
+
+<div id="mainApp">
 <div class="auth-gate" id="authGate" style="display:none;">
   <div class="auth-gate-card">
     <div class="auth-gate-brand" id="gateBrandClickTarget" style="cursor:default;">
@@ -730,9 +813,22 @@
         <p>Biblioteca pessoal com mangás, manhwas, manhuas, danmeis, light novels, visual novels, livros, animes, doramas, séries, filmes e jogos, tudo num só lugar.</p>
       </div>
     </div>
+    <form id="headerSearchForm" autocomplete="off" onsubmit="return false;" style="flex:1;min-width:160px;max-width:360px;">
+      <input type="search" id="headerSearchInput" placeholder="Buscar na minha biblioteca..." autocomplete="off" style="width:100%;padding:9px 12px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface-alt);color:var(--navy);font-size:13px;">
+    </form>
     <div style="display:flex;align-items:center;gap:14px;">
       <span class="status-chip" id="accountBadge" style="display:none;"></span>
       <button class="btn btn-ghost btn-sm" id="themeToggle" type="button">Modo escuro</button>
+      <div class="notif-wrap">
+        <button class="icon-btn" id="btnOpenNotifications" type="button" title="Notificações" aria-label="Notificações">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+        </button>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-panel-header">Atualizações nos seus itens</div>
+          <div id="notifPanelBody"></div>
+        </div>
+      </div>
       <button class="icon-btn" id="btnOpenSettings" type="button" title="Configurações" aria-label="Configurações">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -741,9 +837,10 @@
   </div>
   <div class="app-shell" style="padding:0;">
     <nav class="tabs" id="tabs">
-      <button data-view="dashboard" class="active">Painel</button>
-      <button data-view="library">Biblioteca</button>
-      <button data-view="importexport">Importar / Exportar</button>
+      <button data-view="dashboard" class="active">Meu painel</button>
+      <button data-view="library">Minha Biblioteca</button>
+      <button data-view="importexport" style="display:none;">Importar / Exportar</button>
+      <button data-view="diary">Diário</button>
     </nav>
   </div>
 </header>
@@ -818,10 +915,15 @@
           <option value="title_asc">Título (A-Z)</option>
           <option value="rating_desc">Nota (maior primeiro)</option>
         </select>
+        <div class="view-toggle" id="libraryViewToggle">
+          <button type="button" data-mode="grid" class="active" title="Visualização em capas" aria-label="Visualização em capas"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+          <button type="button" data-mode="list" title="Visualização em lista" aria-label="Visualização em lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+        </div>
         <button class="btn btn-primary" id="btnNewEntry">+ Novo item</button>
       </div>
       <div class="result-count" id="resultCount"></div>
       <div class="card-grid" id="cardGrid"></div>
+      <div class="list-view" id="cardList" style="display:none;"></div>
       <div class="empty-note" id="libraryEmpty" style="display:none;">Nada por aqui ainda. Clique em "+ Novo item" para começar ou importe uma lista existente na aba Importar / Exportar.</div>
     </section>
 
@@ -860,6 +962,27 @@
       </div>
     </section>
 
+    <!-- DIARY -->
+    <section class="view" id="view-diary">
+      <div class="panel">
+        <h3>Novo registro</h3>
+        <div class="field-row">
+          <div class="field">
+            <label>Data</label>
+            <input type="date" id="diaryDateInput">
+          </div>
+        </div>
+        <div class="field">
+          <label>O que você quer registrar?</label>
+          <textarea id="diaryContentInput" placeholder="O que está lendo, assistindo ou jogando, uma impressão, uma ideia solta, o que quiser." style="min-height:90px;"></textarea>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="btnAddDiaryEntry">Salvar registro</button>
+        </div>
+      </div>
+      <div id="diaryList"></div>
+    </section>
+
     <!-- ACCOUNT -->
     <section class="view" id="view-account">
       <h2 style="font-size:22px;font-weight:700;color:var(--navy);margin:0 0 4px;">Configurações</h2>
@@ -874,6 +997,11 @@
         <button type="button" class="settings-card" id="cardConnection" data-target="panel-connection" style="display:none;">
           <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span>
           <span class="settings-text"><strong>Conexão com Supabase</strong><span>Projeto, login e sincronização na nuvem. Modo administrador.</span></span>
+          <span class="settings-chevron">›</span>
+        </button>
+        <button type="button" class="settings-card" id="cardPublicProfile" data-target="panel-public-profile" style="display:none;">
+          <span class="settings-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg></span>
+          <span class="settings-text"><strong>Perfil público</strong><span>Nome, bio, redes sociais e página compartilhável.</span></span>
           <span class="settings-chevron">›</span>
         </button>
         <button type="button" class="settings-card" id="btnJumpImport">
@@ -979,6 +1107,33 @@
         <div class="panel">
           <h3>Sobre onde seus dados ficam</h3>
           <p id="storageExplainer" style="margin-bottom:0;">Carregando informação de armazenamento...</p>
+        </div>
+      </div>
+
+      <div class="settings-panel panel" id="panel-public-profile" style="display:none;">
+        <h3>Perfil público ou privado</h3>
+        <p>Preencha o que quiser mostrar. Se você não marcar "Perfil público" abaixo, seu perfil permanece privado, visível só para você.</p>
+        <div class="field"><label>Nome de exibição</label><input type="text" id="profileDisplayName" placeholder="Como você quer aparecer"></div>
+        <div class="field"><label>Bio</label><textarea id="profileBio" placeholder="Uma frase sobre você e o que você curte consumir." style="min-height:70px;"></textarea></div>
+        <div class="social-links-row">
+          <div class="field"><label>Instagram</label><input type="text" id="profileSocialInstagram" placeholder="@usuario"></div>
+          <div class="field"><label>X / Twitter</label><input type="text" id="profileSocialTwitter" placeholder="@usuario"></div>
+          <div class="field"><label>MyAnimeList</label><input type="text" id="profileSocialMal" placeholder="usuario"></div>
+          <div class="field"><label>Outro link</label><input type="url" id="profileSocialOther" placeholder="https://..."></div>
+        </div>
+        <div class="field" style="margin-top:6px;">
+          <label style="text-transform:none;letter-spacing:0;font-size:14px;"><input type="checkbox" id="profileIsPublic" style="width:auto;margin-right:6px;">Tornar meu perfil e minha biblioteca inteira públicos</label>
+          <p class="hint">Com isso ativado, qualquer pessoa com o link consegue ver seu nome, bio, redes e todos os itens do seu acervo, sem conseguir editar nada.</p>
+        </div>
+        <div class="field" id="profileSlugWrap" style="display:none;">
+          <label>Seu link público</label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <code id="profileSlugDisplay" style="background:var(--ghost);padding:8px 10px;border-radius:8px;font-size:12.5px;color:var(--navy);word-break:break-all;"></code>
+            <button type="button" class="btn btn-sm" id="btnCopyProfileLink">Copiar link</button>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="btnSaveProfile">Salvar perfil</button>
         </div>
       </div>
 
@@ -1216,6 +1371,8 @@
   </div>
 </div>
 
+</div>
+
 <div id="toast-container"></div>
 
 <script>
@@ -1323,9 +1480,14 @@ const customAuthStorage = {
 let state = {
   entries: [],
   goals: [],
+  diary: [],
+  profile: null,
+  updates: [],
   dashboardYear: new Date().getFullYear(),
   dashboardMonth: '',
+  viewMode: 'grid',
   editingId: null,
+  editingDiaryId: null,
   filters: { search:'', type:'', status:'', genre:'', sort:'updated_desc' },
   currentGenreTags: [],
   currentRating: null,
@@ -1421,6 +1583,9 @@ function mapEntryToRow(entry){
     favorite: !!entry.favorite,
     notes: entry.notes || null,
     review: entry.review || null,
+    source_ref_kind: entry.sourceRefKind || null,
+    source_ref_id: entry.sourceRefId || null,
+    last_seen_total: entry.lastSeenTotal || null,
     date_added: entry.dateAdded || todayIso(),
     date_updated: entry.dateUpdated || todayIso()
   };
@@ -1448,6 +1613,9 @@ function mapRowToEntry(row){
     favorite: !!row.favorite,
     notes: row.notes || '',
     review: row.review || '',
+    sourceRefKind: row.source_ref_kind || '',
+    sourceRefId: row.source_ref_id || '',
+    lastSeenTotal: row.last_seen_total==null ? null : row.last_seen_total,
     dateAdded: row.date_added,
     dateUpdated: row.date_updated
   };
@@ -1470,7 +1638,7 @@ const Backend = {
   async loadAll(){
     if(remoteMode()){
       try{
-        const res = await supabase.from('virtualist_entries').select('*').order('date_updated', {ascending:false});
+        const res = await supabase.from('virtualist_entries').select('*').eq('user_id', supaUser.id).order('date_updated', {ascending:false});
         if(res.error) throw res.error;
         state.entries = (res.data || []).map(mapRowToEntry);
         setSaveStatus('saved','sincronizado');
@@ -1642,6 +1810,136 @@ const GoalsBackend = {
       return;
     }
     await GoalsBackend.persistLocal();
+  }
+};
+
+/* ---------------- diary backend (diário pessoal, sempre privado) ---------------- */
+function mapDiaryToRow(d){
+  return { id: d.id, entry_date: d.entryDate, content: d.content, date_updated: todayIso() };
+}
+function mapRowToDiary(row){
+  return { id: row.id, entryDate: row.entry_date, content: row.content, dateAdded: row.date_added };
+}
+const DiaryBackend = {
+  async loadAll(){
+    if(remoteMode()){
+      try{
+        const res = await supabase.from('virtualist_diary').select('*').order('entry_date', {ascending:false});
+        if(res.error) throw res.error;
+        state.diary = (res.data || []).map(mapRowToDiary);
+      }catch(e){ console.error(e); state.diary = []; }
+      return;
+    }
+    try{
+      const value = await appStorage.get('virtualist:diary');
+      state.diary = value ? JSON.parse(value) : [];
+    }catch(e){ state.diary = []; }
+  },
+  async persistLocal(){ await appStorage.set('virtualist:diary', JSON.stringify(state.diary)); },
+  async insert(entry){
+    if(remoteMode()){
+      try{
+        const row = mapDiaryToRow(entry);
+        delete row.id;
+        const res = await supabase.from('virtualist_diary').insert(row).select().single();
+        if(res.error) throw res.error;
+        entry.id = res.data.id;
+        entry.dateAdded = res.data.date_added;
+      }catch(e){ console.error(e); toast('Não consegui salvar o registro na nuvem.', true); }
+      return;
+    }
+    entry.id = uid();
+    entry.dateAdded = todayIso();
+    await DiaryBackend.persistLocal();
+  },
+  async remove(id){
+    state.diary = state.diary.filter(function(d){ return d.id !== id; });
+    if(remoteMode()){
+      try{
+        const res = await supabase.from('virtualist_diary').delete().eq('id', id);
+        if(res.error) throw res.error;
+      }catch(e){ console.error(e); toast('Não consegui remover o registro na nuvem.', true); }
+      return;
+    }
+    await DiaryBackend.persistLocal();
+  }
+};
+
+/* ---------------- profile backend (perfil público/privado) ---------------- */
+function mapProfileToRow(p){
+  return {
+    display_name: p.displayName || null,
+    bio: p.bio || null,
+    social_links: p.socialLinks || {},
+    is_public: !!p.isPublic,
+    slug: p.slug || null,
+    date_updated: todayIso()
+  };
+}
+function mapRowToProfile(row){
+  return {
+    displayName: row.display_name || '',
+    bio: row.bio || '',
+    socialLinks: row.social_links || {},
+    isPublic: !!row.is_public,
+    slug: row.slug || ''
+  };
+}
+function generateSlug(){
+  return 'u' + Math.random().toString(36).slice(2, 10);
+}
+const ProfileBackend = {
+  async load(){
+    if(!remoteMode()){ state.profile = null; return; }
+    try{
+      const res = await supabase.from('virtualist_profiles').select('*').eq('user_id', supaUser.id).maybeSingle();
+      if(res.error) throw res.error;
+      state.profile = res.data ? mapRowToProfile(res.data) : null;
+    }catch(e){ console.error(e); state.profile = null; }
+  },
+  async save(profile){
+    if(!remoteMode()) return false;
+    if(!profile.slug) profile.slug = generateSlug();
+    try{
+      const row = mapProfileToRow(profile);
+      row.user_id = supaUser.id;
+      const res = await supabase.from('virtualist_profiles').upsert(row, {onConflict:'user_id'});
+      if(res.error) throw res.error;
+      state.profile = profile;
+      return true;
+    }catch(e){
+      console.error(e);
+      toast('Não consegui salvar o perfil. Se o link público já estiver em uso, tentaremos outro na próxima vez.', true);
+      return false;
+    }
+  }
+};
+
+/* ---------------- follows backend (seguir perfis) ---------------- */
+const FollowsBackend = {
+  async isFollowing(userId){
+    if(!remoteMode()) return false;
+    try{
+      const res = await supabase.from('virtualist_follows').select('id').eq('follower_id', supaUser.id).eq('followed_id', userId).maybeSingle();
+      return !!(res.data);
+    }catch(e){ return false; }
+  },
+  async follow(userId){
+    if(!remoteMode()) return;
+    try{ await supabase.from('virtualist_follows').insert({follower_id: supaUser.id, followed_id: userId}); }
+    catch(e){ console.error(e); toast('Não consegui seguir esse perfil agora.', true); }
+  },
+  async unfollow(userId){
+    if(!remoteMode()) return;
+    try{ await supabase.from('virtualist_follows').delete().eq('follower_id', supaUser.id).eq('followed_id', userId); }
+    catch(e){ console.error(e); }
+  },
+  async listFollowedIds(){
+    if(!remoteMode()) return [];
+    try{
+      const res = await supabase.from('virtualist_follows').select('followed_id').eq('follower_id', supaUser.id);
+      return (res.data||[]).map(function(r){ return r.followed_id; });
+    }catch(e){ return []; }
   }
 };
 
@@ -1942,7 +2240,9 @@ async function searchAniListCombined(title, onlyAnime, onlyManga){
       genres: mapAniListGenres(m.genres),
       link: m.siteUrl || '',
       author: studio,
-      workStatus: ANILIST_STATUS_MAP[m.status] || ''
+      workStatus: ANILIST_STATUS_MAP[m.status] || '',
+      aniListId: m.id,
+      aniListIsAnime: true
     });
   });
   const mangaList = (json && json.data && json.data.manga && json.data.manga.media) || [];
@@ -1960,7 +2260,9 @@ async function searchAniListCombined(title, onlyAnime, onlyManga){
       link: m.siteUrl || '',
       author: author,
       artist: artist,
-      workStatus: ANILIST_STATUS_MAP[m.status] || ''
+      workStatus: ANILIST_STATUS_MAP[m.status] || '',
+      aniListId: m.id,
+      aniListIsAnime: false
     });
   });
   return out;
@@ -2232,6 +2534,12 @@ async function runHeroSearch(){
         state.currentGenreTags = (r.genres||[]).slice();
         renderGenreChips();
         showCoverPreview(r.coverUrl || '');
+        state.pendingSourceRef = null;
+        if(r.aniListId){
+          state.pendingSourceRef = { kind: r.aniListIsAnime ? 'anilist-anime' : 'anilist-manga', id: String(r.aniListId) };
+        } else if(r.tmdbId && r.tmdbKind === 'tv'){
+          state.pendingSourceRef = { kind: 'tmdb-tv', id: String(r.tmdbId) };
+        }
         toast(r.workStatus ? 'Item pré-preenchido. Obra ' + r.workStatus.toLowerCase() + '. Confira e salve.' : 'Item pré-preenchido. Confira e salve.');
       });
     });
@@ -2268,10 +2576,53 @@ function switchToView(view){
   if(view === 'dashboard') renderDashboard();
   if(view === 'library') renderLibrary();
   if(view === 'account') refreshAccountView();
+  if(view === 'diary') renderDiary();
 }
 document.getElementById('btnOpenSettings').addEventListener('click', function(){ switchToView('account'); });
 
-/* ---------------- dashboard ---------------- */
+/* ---------------- diary (diário pessoal) ---------------- */
+function renderDiary(){
+  const list = document.getElementById('diaryList');
+  if(!state.diary.length){
+    list.innerHTML = '<div class="empty-note">Nenhum registro ainda. Escreva o que você quiser sobre o que está consumindo, uma linha já vale.</div>';
+    return;
+  }
+  const sorted = state.diary.slice().sort(function(a,b){ return (b.entryDate||'').localeCompare(a.entryDate||''); });
+  list.innerHTML = sorted.map(function(d){
+    return '<div class="diary-entry">' +
+      '<div class="diary-entry-date">'+escapeHtml(formatDiaryDate(d.entryDate))+'</div>' +
+      '<div class="diary-entry-content">'+escapeHtml(d.content)+'</div>' +
+      '<div class="diary-entry-actions"><button type="button" class="btn btn-ghost btn-sm" data-id="'+d.id+'">Excluir</button></div>' +
+    '</div>';
+  }).join('');
+  list.querySelectorAll('.diary-entry-actions button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      confirmAction('Excluir registro', 'Remover esse registro do diário? Essa ação não pode ser desfeita.', async function(){
+        await DiaryBackend.remove(btn.dataset.id);
+        renderDiary();
+        toast('Registro removido.');
+      });
+    });
+  });
+}
+function formatDiaryDate(iso){
+  if(!iso) return '';
+  const parts = iso.split('-');
+  if(parts.length !== 3) return iso;
+  return parts[2]+'/'+parts[1]+'/'+parts[0];
+}
+document.getElementById('btnAddDiaryEntry').addEventListener('click', async function(){
+  const dateVal = document.getElementById('diaryDateInput').value;
+  const content = document.getElementById('diaryContentInput').value.trim();
+  if(!content){ toast('Escreva algo antes de salvar.', true); return; }
+  const entry = { entryDate: dateVal || todayIso().slice(0,10), content: content };
+  state.diary.push(entry);
+  await DiaryBackend.insert(entry);
+  document.getElementById('diaryContentInput').value = '';
+  document.getElementById('diaryDateInput').value = '';
+  renderDiary();
+  toast('Registro salvo.');
+});
 function renderDashboard(){
   const total = state.entries.length;
   const ongoingCount = state.entries.filter(function(e){ return ONGOING_STATUSES.indexOf(e.status) !== -1; }).length;
@@ -2503,19 +2854,24 @@ function renderLibrary(){
   const list = applyFilters();
   document.getElementById('resultCount').textContent = list.length + (list.length === 1 ? ' item' : ' itens');
   const grid = document.getElementById('cardGrid');
+  const listBox = document.getElementById('cardList');
   const emptyNote = document.getElementById('libraryEmpty');
   if(list.length === 0){
     grid.innerHTML = '';
+    listBox.innerHTML = '';
     emptyNote.style.display = 'block';
     return;
   }
   emptyNote.style.display = 'none';
+  grid.style.display = state.viewMode === 'list' ? 'none' : '';
+  listBox.style.display = state.viewMode === 'list' ? '' : 'none';
   grid.innerHTML = list.map(entryCardHtml).join('');
-  document.querySelectorAll('.entry-card [data-action="edit"]').forEach(function(b){
+  listBox.innerHTML = list.map(entryListRowHtml).join('');
+  document.querySelectorAll('.entry-card [data-action="edit"], .list-row[data-action="edit"]').forEach(function(b){
     b.addEventListener('click', function(){ openEntryModal(b.dataset.id); });
   });
-  document.querySelectorAll('.entry-card .fav-btn').forEach(function(b){
-    b.addEventListener('click', function(){ toggleFavorite(b.dataset.id); });
+  document.querySelectorAll('.entry-card .fav-btn, .list-row .list-row-fav').forEach(function(b){
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); toggleFavorite(b.dataset.id); });
   });
 }
 
@@ -2567,6 +2923,29 @@ function entryCardHtml(e){
   '</div>';
 }
 
+function entryListRowHtml(e){
+  const prog = progressLabel(e);
+  const cover = '<div class="list-row-cover">' +
+    (e.coverUrl ? '<img src="'+escapeHtml(e.coverUrl)+'" alt="" loading="lazy" onerror="this.remove()">' : '') +
+    '<span class="entry-cover-fallback">'+escapeHtml(e.type)+'</span>' +
+  '</div>';
+  const metaBits = [e.type];
+  if(e.author) metaBits.push(e.author);
+  return '<div class="list-row" data-action="edit" data-id="'+e.id+'" style="cursor:pointer;">' +
+    cover +
+    '<div class="list-row-body">' +
+      '<div class="list-row-title">'+escapeHtml(e.title)+'</div>' +
+      '<div class="list-row-meta">'+escapeHtml(metaBits.join(' · '))+'</div>' +
+    '</div>' +
+    '<div class="list-row-extra">' +
+      (prog ? '<span class="progress-text">'+escapeHtml(prog)+'</span>' : '') +
+      starsHtml(e.rating) +
+      '<span class="status-chip" style="'+statusChipStyle(e.status)+'">'+escapeHtml(e.status)+'</span>' +
+      '<button class="list-row-fav'+(e.favorite?' active':'')+'" data-id="'+e.id+'">★</button>' +
+    '</div>' +
+  '</div>';
+}
+
 async function toggleFavorite(id){
   const e = state.entries.find(function(x){ return x.id === id; });
   if(!e) return;
@@ -2584,6 +2963,13 @@ document.getElementById('filterType').addEventListener('change', function(ev){ s
 document.getElementById('filterStatus').addEventListener('change', function(ev){ state.filters.status = ev.target.value; renderLibrary(); });
 document.getElementById('filterGenre').addEventListener('change', function(ev){ state.filters.genre = ev.target.value; renderLibrary(); });
 document.getElementById('sortSelect').addEventListener('change', function(ev){ state.filters.sort = ev.target.value; renderLibrary(); });
+
+document.getElementById('headerSearchInput').addEventListener('input', debounce(function(ev){
+  const q = ev.target.value;
+  state.filters.search = q;
+  document.getElementById('searchInput').value = q;
+  document.querySelector('nav.tabs button[data-view="library"]').click();
+}, 250));
 
 function debounce(fn, ms){
   let t;
@@ -2667,6 +3053,7 @@ document.getElementById('genreInput').addEventListener('keydown', function(ev){
 
 function openEntryModal(id){
   state.editingId = id || null;
+  state.pendingSourceRef = null;
   const e = id ? state.entries.find(function(x){ return x.id === id; }) : null;
   document.getElementById('entryModalTitle').textContent = e ? 'Editar item' : 'Novo item';
   document.getElementById('btnDeleteEntry').style.display = e ? 'inline-block' : 'none';
@@ -2751,8 +3138,13 @@ document.getElementById('entryForm').addEventListener('submit', async function(e
   } else {
     data.id = uid();
     data.dateAdded = todayIso();
+    if(state.pendingSourceRef){
+      data.sourceRefKind = state.pendingSourceRef.kind;
+      data.sourceRefId = state.pendingSourceRef.id;
+    }
     state.entries.push(data);
     await Backend.insert(data);
+    state.pendingSourceRef = null;
     toast('Item adicionado ao acervo.');
   }
   closeEntryModal();
@@ -2953,6 +3345,7 @@ function newEmptyEntry(overrides){
     author:'', artist:'', genres:[], rating:null,
     progressCurrent:null, progressTotal:null, subCurrent:null, subTotal:null,
     startDate:'', endDate:'', platform:'', link:'', favorite:false, notes:'', review:'',
+    sourceRefKind:'', sourceRefId:'', lastSeenTotal:null,
     dateAdded: todayIso(), dateUpdated: todayIso()
   }, overrides);
 }
@@ -3264,13 +3657,56 @@ async function refreshAccountView(){
     document.getElementById('profileLoggedOut').style.display = 'none';
     document.getElementById('profileLoggedIn').style.display = '';
     document.getElementById('profileEmailDisplay').textContent = supaUser.email;
+    document.getElementById('cardPublicProfile').style.display = '';
+    refreshPublicProfilePanel();
     await maybeOfferMigration();
   } else {
     document.getElementById('profileLoggedOut').style.display = '';
     document.getElementById('profileLoggedIn').style.display = 'none';
     document.getElementById('migratePanel').style.display = 'none';
+    document.getElementById('cardPublicProfile').style.display = 'none';
   }
 }
+
+function refreshPublicProfilePanel(){
+  const p = state.profile || { displayName:'', bio:'', socialLinks:{}, isPublic:false, slug:'' };
+  document.getElementById('profileDisplayName').value = p.displayName || '';
+  document.getElementById('profileBio').value = p.bio || '';
+  document.getElementById('profileSocialInstagram').value = (p.socialLinks && p.socialLinks.instagram) || '';
+  document.getElementById('profileSocialTwitter').value = (p.socialLinks && p.socialLinks.twitter) || '';
+  document.getElementById('profileSocialMal').value = (p.socialLinks && p.socialLinks.mal) || '';
+  document.getElementById('profileSocialOther').value = (p.socialLinks && p.socialLinks.other) || '';
+  document.getElementById('profileIsPublic').checked = !!p.isPublic;
+  const slugWrap = document.getElementById('profileSlugWrap');
+  if(p.isPublic && p.slug){
+    slugWrap.style.display = '';
+    document.getElementById('profileSlugDisplay').textContent = window.location.origin + '/?u=' + p.slug;
+  } else {
+    slugWrap.style.display = 'none';
+  }
+}
+document.getElementById('btnSaveProfile').addEventListener('click', async function(){
+  const profile = state.profile || {};
+  profile.displayName = document.getElementById('profileDisplayName').value.trim();
+  profile.bio = document.getElementById('profileBio').value.trim();
+  profile.socialLinks = {
+    instagram: document.getElementById('profileSocialInstagram').value.trim(),
+    twitter: document.getElementById('profileSocialTwitter').value.trim(),
+    mal: document.getElementById('profileSocialMal').value.trim(),
+    other: document.getElementById('profileSocialOther').value.trim()
+  };
+  profile.isPublic = document.getElementById('profileIsPublic').checked;
+  const ok = await ProfileBackend.save(profile);
+  if(ok){
+    refreshPublicProfilePanel();
+    toast('Perfil salvo.');
+  }
+});
+document.getElementById('btnCopyProfileLink').addEventListener('click', async function(){
+  const text = document.getElementById('profileSlugDisplay').textContent;
+  try{ await navigator.clipboard.writeText(text); toast('Link copiado.'); }
+  catch(e){ toast('Não consegui copiar automaticamente. Selecione e copie o texto manualmente.', true); }
+});
 
 /* ---------------- auth gate (tela de entrada) ---------------- */
 let gateMode = 'login';
@@ -3334,6 +3770,8 @@ async function afterGateLogin(){
   document.getElementById('gateForm').reset();
   await Backend.loadAll();
   await GoalsBackend.loadAll();
+  await DiaryBackend.loadAll();
+  await ProfileBackend.load();
   renderDashboard();
   renderLibrary();
   await refreshAccountView();
@@ -3518,10 +3956,13 @@ function updateAccountBadge(){
     badge.textContent = 'Conectada como ' + supaUser.email;
     badge.style.background = 'var(--status-active-bg)';
     badge.style.color = 'var(--status-active-fg)';
+    badge.style.cursor = 'pointer';
+    badge.title = 'Ver meu perfil';
   } else {
     badge.style.display = 'none';
   }
 }
+document.getElementById('accountBadge').addEventListener('click', openOwnProfile);
 
 document.getElementById('btnEditSupabaseConfig').addEventListener('click', function(){
   configFormExpanded = true;
@@ -3571,6 +4012,8 @@ document.getElementById('btnClearSupabaseConfig').addEventListener('click', func
     supaConfig = null; supaUser = null; supabase = null;
     await Backend.loadAll();
     await GoalsBackend.loadAll();
+  await DiaryBackend.loadAll();
+  await ProfileBackend.load();
     renderDashboard(); renderLibrary();
     await refreshAccountView();
     updateGateVisibility();
@@ -3582,6 +4025,8 @@ document.getElementById('btnSignOutProfile').addEventListener('click', async fun
   supaUser = null;
   await Backend.loadAll();
   await GoalsBackend.loadAll();
+  await DiaryBackend.loadAll();
+  await ProfileBackend.load();
   renderDashboard(); renderLibrary();
   await refreshAccountView();
   updateGateVisibility();
@@ -3621,8 +4066,33 @@ document.getElementById('btnJumpImport').addEventListener('click', function(){
   document.querySelector('nav.tabs button[data-view="importexport"]').click();
 });
 
+/* ---------------- view mode (capas / lista) ---------------- */
+async function loadViewMode(){
+  try{
+    const value = await appStorage.get('virtualist:view-mode');
+    return (value === 'list') ? 'list' : 'grid';
+  }catch(e){ return 'grid'; }
+}
+async function saveViewMode(mode){
+  try{ await appStorage.set('virtualist:view-mode', mode); }catch(e){}
+}
+function applyViewModeToggle(containerId, mode){
+  const wrap = document.getElementById(containerId);
+  if(!wrap) return;
+  wrap.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.mode === mode); });
+}
+document.getElementById('libraryViewToggle').addEventListener('click', async function(ev){
+  const btn = ev.target.closest('button[data-mode]');
+  if(!btn) return;
+  state.viewMode = btn.dataset.mode;
+  applyViewModeToggle('libraryViewToggle', state.viewMode);
+  await saveViewMode(state.viewMode);
+  renderLibrary();
+});
+
 /* ---------------- theme ---------------- */
 let currentTheme = 'light';
+let appInitialized = false;
 async function loadTheme(){
   try{
     const value = await appStorage.get('virtualist:theme');
@@ -3645,8 +4115,15 @@ document.getElementById('themeToggle').addEventListener('click', async function(
 
 /* ---------------- init ---------------- */
 async function init(){
+  const publicSlug = new URLSearchParams(window.location.search).get('u');
+  if(publicSlug){
+    await renderPublicProfilePage(publicSlug);
+    return;
+  }
   currentTheme = await loadTheme();
   applyTheme(currentTheme);
+  state.viewMode = await loadViewMode();
+  applyViewModeToggle('libraryViewToggle', state.viewMode);
   populateStaticOptions();
   tmdbApiKey = await loadTmdbKey();
   if(!tmdbApiKey && DEFAULT_TMDB_KEY){
@@ -3671,12 +4148,306 @@ async function init(){
   }
   await Backend.loadAll();
   await GoalsBackend.loadAll();
+  await DiaryBackend.loadAll();
+  await ProfileBackend.load();
   renderDashboard();
   renderLibrary();
   await refreshAccountView();
   updateGateVisibility();
+  checkForUpdates();
+  appInitialized = true;
 }
 init();
+
+/* ---------------- public profile page ---------------- */
+async function renderPublicProfilePage(slug){
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('publicProfileView').style.display = 'block';
+  const content = document.getElementById('publicProfileContent');
+  content.innerHTML = '<p style="color:var(--muted);">Carregando...</p>';
+  try{
+    const client = window.supabase.createClient(DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_KEY);
+    const profRes = await client.from('virtualist_profiles').select('*').eq('slug', slug).eq('is_public', true).maybeSingle();
+    if(profRes.error || !profRes.data){
+      content.innerHTML = '<div class="empty-note">Não encontramos esse perfil, ou ele não está público.</div>';
+      return;
+    }
+    const profile = mapRowToProfile(profRes.data);
+    const entriesRes = await client.from('virtualist_entries').select('*').eq('user_id', profRes.data.user_id).order('date_updated', {ascending:false});
+    const entries = (entriesRes.data || []).map(mapRowToEntry);
+    const canFollow = !!(supaUser && supaUser.id !== profRes.data.user_id);
+    await renderProfileIntoContent(content, profile, entries, window.location.href, '', canFollow ? profRes.data.user_id : null);
+  }catch(e){
+    console.error(e);
+    content.innerHTML = '<div class="empty-note">Não consegui carregar esse perfil agora. Tente de novo em instantes.</div>';
+  }
+}
+function openOwnProfile(){
+  if(!supaUser){ toast('Entre com sua conta para ver seu perfil.', true); return; }
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('publicProfileView').style.display = 'block';
+  const content = document.getElementById('publicProfileContent');
+  const profile = state.profile || { displayName:'', bio:'', socialLinks:{}, isPublic:false, slug:'' };
+  const shareUrl = profile.slug ? (window.location.origin + '/?u=' + profile.slug) : window.location.origin;
+  const notice = profile.isPublic
+    ? ''
+    : '<p class="hint" style="margin:10px 0 0;">Seu perfil está privado, só você consegue ver esta página. Ative "Perfil público" nas Configurações para compartilhar com outras pessoas.</p>';
+  renderProfileIntoContent(content, profile, state.entries, shareUrl, notice, null);
+}
+document.getElementById('publicViewBackLink').addEventListener('click', function(ev){
+  if(appInitialized){
+    ev.preventDefault();
+    document.getElementById('publicProfileView').style.display = 'none';
+    document.getElementById('mainApp').style.display = '';
+  }
+});
+async function renderProfileIntoContent(content, profile, entries, shareUrl, extraNoticeHtml, followUserId){
+  const socials = [];
+  if(profile.socialLinks.instagram) socials.push('<a href="https://instagram.com/'+encodeURIComponent(profile.socialLinks.instagram.replace('@',''))+'" target="_blank" rel="noopener">Instagram</a>');
+  if(profile.socialLinks.twitter) socials.push('<a href="https://x.com/'+encodeURIComponent(profile.socialLinks.twitter.replace('@',''))+'" target="_blank" rel="noopener">X / Twitter</a>');
+  if(profile.socialLinks.mal) socials.push('<a href="https://myanimelist.net/profile/'+encodeURIComponent(profile.socialLinks.mal)+'" target="_blank" rel="noopener">MyAnimeList</a>');
+  if(profile.socialLinks.other) socials.push('<a href="'+escapeHtml(profile.socialLinks.other)+'" target="_blank" rel="noopener">Link</a>');
+
+  const shareTitle = (profile.displayName || 'Biblioteca pessoal') + ' no Virtualist';
+  const shareText = 'Dá uma olhada na biblioteca de '+(profile.displayName || 'alguém')+' no Virtualist:';
+
+  let html = '<div class="panel">' +
+    '<h2 style="margin:0 0 6px;font-size:22px;color:var(--navy);">'+escapeHtml(profile.displayName || 'Biblioteca pessoal')+'</h2>' +
+    (profile.bio ? '<p style="margin:0 0 10px;">'+escapeHtml(profile.bio)+'</p>' : '') +
+    (socials.length ? '<p style="margin:0;">'+socials.join(' · ')+'</p>' : '') +
+    (followUserId ? '<div style="margin-top:12px;"><button type="button" class="btn btn-primary" id="btnFollowProfile">Seguir</button></div>' : '') +
+    '<div class="share-row">' +
+      '<a class="share-btn" id="btnShareEmail" href="mailto:?subject='+encodeURIComponent(shareTitle)+'&body='+encodeURIComponent(shareText+' '+shareUrl)+'">E-mail</a>' +
+      '<a class="share-btn" href="https://wa.me/?text='+encodeURIComponent(shareText+' '+shareUrl)+'" target="_blank" rel="noopener">WhatsApp</a>' +
+      '<a class="share-btn" href="https://twitter.com/intent/tweet?text='+encodeURIComponent(shareText)+'&url='+encodeURIComponent(shareUrl)+'" target="_blank" rel="noopener">X / Twitter</a>' +
+      '<a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareUrl)+'" target="_blank" rel="noopener">Facebook</a>' +
+      '<button type="button" class="share-btn" id="btnCopyPublicLink">Copiar link</button>' +
+    '</div>' +
+    (extraNoticeHtml || '') +
+  '</div>';
+
+  html += '<div class="section-title" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
+    '<span>Biblioteca ('+entries.length+' '+(entries.length===1?'item':'itens')+')</span>' +
+    '<div class="view-toggle" id="publicViewToggle">' +
+      '<button type="button" data-mode="grid" title="Visualização em capas" aria-label="Visualização em capas"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>' +
+      '<button type="button" data-mode="list" title="Visualização em lista" aria-label="Visualização em lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>' +
+    '</div>' +
+  '</div>';
+  html += '<div id="publicEntriesBox"></div>';
+  content.innerHTML = html;
+
+  document.getElementById('btnCopyPublicLink').addEventListener('click', async function(){
+    try{ await navigator.clipboard.writeText(shareUrl); toast('Link copiado.'); }
+    catch(e){ toast('Não consegui copiar automaticamente. Copie o link da barra de endereço.', true); }
+  });
+
+  if(followUserId){
+    const followBtn = document.getElementById('btnFollowProfile');
+    let isFollowing = await FollowsBackend.isFollowing(followUserId);
+    function paintFollowBtn(){
+      followBtn.textContent = isFollowing ? 'Seguindo' : 'Seguir';
+      followBtn.className = isFollowing ? 'btn btn-ghost' : 'btn btn-primary';
+    }
+    paintFollowBtn();
+    followBtn.addEventListener('click', async function(){
+      followBtn.disabled = true;
+      if(isFollowing) await FollowsBackend.unfollow(followUserId);
+      else await FollowsBackend.follow(followUserId);
+      isFollowing = !isFollowing;
+      paintFollowBtn();
+      followBtn.disabled = false;
+      toast(isFollowing ? 'Agora você segue esse perfil.' : 'Deixou de seguir.');
+    });
+  }
+
+  let publicViewMode = await loadViewMode();
+  function renderPublicEntries(){
+    const box = document.getElementById('publicEntriesBox');
+    applyViewModeToggle('publicViewToggle', publicViewMode);
+    if(!entries.length){
+      box.innerHTML = '<div class="empty-note">Essa biblioteca ainda está vazia.</div>';
+      return;
+    }
+    box.innerHTML = publicViewMode === 'list'
+      ? '<div class="list-view">' + entries.map(publicEntryListRowHtml).join('') + '</div>'
+      : '<div class="card-grid">' + entries.map(publicEntryCardHtml).join('') + '</div>';
+  }
+  renderPublicEntries();
+  document.getElementById('publicViewToggle').addEventListener('click', async function(ev){
+    const btn = ev.target.closest('button[data-mode]');
+    if(!btn) return;
+    publicViewMode = btn.dataset.mode;
+    await saveViewMode(publicViewMode);
+    renderPublicEntries();
+  });
+}
+function publicEntryCardHtml(e){
+  const genres = (e.genres||[]).slice(0,3).map(function(g){ return '<span class="genre-chip">'+escapeHtml(g)+'</span>'; }).join('');
+  const prog = progressLabel(e);
+  const cover = '<div class="entry-cover-wrap">' +
+    (e.coverUrl ? '<img src="'+escapeHtml(e.coverUrl)+'" alt="" loading="lazy" onerror="this.remove()">' : '') +
+    '<span class="entry-cover-fallback">'+escapeHtml(e.type)+'</span>' +
+  '</div>';
+  return '<div class="entry-card">' + cover +
+    '<div class="entry-body">' +
+    '<div class="entry-top"><div class="entry-type">'+escapeHtml(e.type)+'</div></div>' +
+    '<div class="entry-title">'+escapeHtml(e.title)+'</div>' +
+    (e.author ? '<div class="entry-author">'+escapeHtml(e.author)+'</div>' : '') +
+    '<div class="entry-meta-row">' + starsHtml(e.rating) + (prog ? '<span class="progress-text">'+escapeHtml(prog)+'</span>' : '') + '</div>' +
+    (genres ? '<div class="genre-chips">'+genres+'</div>' : '') +
+    '<div class="entry-actions"><span class="status-chip" style="'+statusChipStyle(e.status)+'">'+escapeHtml(e.status)+'</span></div>' +
+    '</div></div>';
+}
+function publicEntryListRowHtml(e){
+  const prog = progressLabel(e);
+  const cover = '<div class="list-row-cover">' +
+    (e.coverUrl ? '<img src="'+escapeHtml(e.coverUrl)+'" alt="" loading="lazy" onerror="this.remove()">' : '') +
+    '<span class="entry-cover-fallback">'+escapeHtml(e.type)+'</span>' +
+  '</div>';
+  const metaBits = [e.type];
+  if(e.author) metaBits.push(e.author);
+  return '<div class="list-row">' + cover +
+    '<div class="list-row-body">' +
+      '<div class="list-row-title">'+escapeHtml(e.title)+'</div>' +
+      '<div class="list-row-meta">'+escapeHtml(metaBits.join(' · '))+'</div>' +
+    '</div>' +
+    '<div class="list-row-extra">' +
+      (prog ? '<span class="progress-text">'+escapeHtml(prog)+'</span>' : '') +
+      starsHtml(e.rating) +
+      '<span class="status-chip" style="'+statusChipStyle(e.status)+'">'+escapeHtml(e.status)+'</span>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ---------------- notificações de atualização (capítulo/episódio novo) ---------------- */
+function openNotifPanel(){ document.getElementById('notifPanel').classList.add('show'); }
+function closeNotifPanel(){ document.getElementById('notifPanel').classList.remove('show'); }
+document.getElementById('btnOpenNotifications').addEventListener('click', function(ev){
+  ev.stopPropagation();
+  const panel = document.getElementById('notifPanel');
+  panel.classList.contains('show') ? closeNotifPanel() : openNotifPanel();
+});
+document.addEventListener('click', function(ev){
+  const wrap = document.querySelector('.notif-wrap');
+  if(wrap && !wrap.contains(ev.target)) closeNotifPanel();
+});
+function renderNotifBadgeAndPanel(){
+  const badge = document.getElementById('notifBadge');
+  const body = document.getElementById('notifPanelBody');
+  if(!state.updates.length){
+    badge.style.display = 'none';
+    body.innerHTML = '<div class="notif-empty">Nenhuma novidade por enquanto.</div>';
+    return;
+  }
+  badge.style.display = 'flex';
+  badge.textContent = state.updates.length;
+  body.innerHTML = state.updates.map(function(u, idx){
+    return '<div class="notif-item" data-idx="'+idx+'">' +
+      '<div class="notif-title">'+escapeHtml(u.title)+'</div>' +
+      '<div class="notif-msg">'+escapeHtml(u.message)+'</div>' +
+    '</div>';
+  }).join('');
+  body.querySelectorAll('.notif-item').forEach(function(el){
+    el.addEventListener('click', async function(){
+      const idx = Number(el.dataset.idx);
+      const u = state.updates[idx];
+      state.updates = state.updates.filter(function(x, i){ return i !== idx; });
+      renderNotifBadgeAndPanel();
+      closeNotifPanel();
+      if(u.followSlug){
+        window.location.href = window.location.origin + '/?u=' + u.followSlug;
+        return;
+      }
+      switchToView('library');
+      document.querySelector('nav.tabs button[data-view="library"]').click();
+      openEntryModal(u.entryId);
+    });
+  });
+}
+async function fetchAniListTotals(refId, isAnime){
+  const query = 'query($id:Int){ Media(id:$id, type:'+(isAnime?'ANIME':'MANGA')+'){ chapters episodes } }';
+  const res = await fetch('https://graphql.anilist.co', {
+    method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body: JSON.stringify({query:query, variables:{id: parseInt(refId,10)}})
+  });
+  if(!res.ok) return null;
+  const json = await res.json();
+  const m = json && json.data && json.data.Media;
+  if(!m) return null;
+  return isAnime ? m.episodes : m.chapters;
+}
+async function fetchTmdbTvTotal(refId){
+  if(!tmdbApiKey) return null;
+  const res = await fetch('https://api.themoviedb.org/3/tv/'+refId+'?api_key='+encodeURIComponent(tmdbApiKey));
+  if(!res.ok) return null;
+  const data = await res.json();
+  return data.number_of_episodes || null;
+}
+async function checkFollowedUpdates(){
+  if(!remoteMode()) return [];
+  const followedIds = await FollowsBackend.listFollowedIds();
+  if(!followedIds.length) return [];
+  let slugMap = {};
+  try{
+    const profRes = await supabase.from('virtualist_profiles').select('user_id,slug,display_name').in('user_id', followedIds);
+    (profRes.data||[]).forEach(function(p){ slugMap[p.user_id] = {slug:p.slug, name:p.display_name}; });
+  }catch(e){}
+  let seenMap = {};
+  try{ seenMap = JSON.parse(await appStorage.get('virtualist:follow-seen') || '{}'); }catch(e){}
+  const updates = [];
+  for(const uid of followedIds){
+    try{
+      const res = await supabase.from('virtualist_entries').select('id,title,date_added').eq('user_id', uid).order('date_added',{ascending:false}).limit(5);
+      if(res.error || !res.data || !res.data.length) continue;
+      const lastSeen = seenMap[uid] || '';
+      const fresh = res.data.filter(function(r){ return r.date_added > lastSeen; });
+      if(fresh.length){
+        const info = slugMap[uid] || {};
+        const who = info.name || 'Alguém que você segue';
+        updates.push({
+          entryId: null,
+          followSlug: info.slug || null,
+          title: who,
+          message: fresh.length === 1 ? ('Adicionou "'+fresh[0].title+'"') : ('Adicionou '+fresh.length+' itens novos')
+        });
+        seenMap[uid] = res.data[0].date_added;
+      }
+    }catch(e){}
+    await new Promise(function(r){ setTimeout(r, 200); });
+  }
+  try{ await appStorage.set('virtualist:follow-seen', JSON.stringify(seenMap)); }catch(e){}
+  return updates;
+}
+async function checkForUpdates(){
+  try{
+    const lastCheck = await appStorage.get('virtualist:last-update-check');
+    if(lastCheck && (Date.now() - Number(lastCheck)) < 12*60*60*1000) return renderNotifBadgeAndPanel();
+    const candidates = state.entries.filter(function(e){
+      return e.sourceRefKind && e.sourceRefId && e.status !== 'Abandonado';
+    });
+    const updates = [];
+    for(const entry of candidates){
+      try{
+        let total = null;
+        if(entry.sourceRefKind === 'anilist-manga') total = await fetchAniListTotals(entry.sourceRefId, false);
+        else if(entry.sourceRefKind === 'anilist-anime') total = await fetchAniListTotals(entry.sourceRefId, true);
+        else if(entry.sourceRefKind === 'tmdb-tv') total = await fetchTmdbTvTotal(entry.sourceRefId);
+        if(total && entry.lastSeenTotal && total > entry.lastSeenTotal){
+          updates.push({ entryId: entry.id, title: entry.title, message: 'Novo conteúdo disponível: '+entry.lastSeenTotal+' → '+total });
+        }
+        if(total && (!entry.lastSeenTotal || total !== entry.lastSeenTotal)){
+          entry.lastSeenTotal = total;
+          await Backend.update(entry);
+        }
+      }catch(e){}
+      await new Promise(function(r){ setTimeout(r, 250); });
+    }
+    const followUpdates = await checkFollowedUpdates();
+    state.updates = updates.concat(followUpdates);
+    await appStorage.set('virtualist:last-update-check', String(Date.now()));
+  }catch(e){}
+  renderNotifBadgeAndPanel();
+}
 
 })();
 </script>
