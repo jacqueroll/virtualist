@@ -2522,6 +2522,8 @@ async function runHeroSearch(){
         let r = combined[Number(btn.dataset.idx)];
         if(r.tmdbId){ btn.style.opacity='.6'; r = await enrichTmdbResult(r); btn.style.opacity=''; }
         else if(r.rawgId){ btn.style.opacity='.6'; r = await enrichRawgResult(r); btn.style.opacity=''; }
+        resultsBox.innerHTML = '';
+        document.getElementById('heroSearchInput').value = '';
         openEntryModal(null);
         document.getElementById('f_title').value = r.title || '';
         document.getElementById('f_originalTitle').value = r.originalTitle || '';
