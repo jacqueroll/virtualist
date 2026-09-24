@@ -95,8 +95,8 @@
     border-bottom:1px solid var(--line-strong);
     background:var(--white);
   }
-  .top-inner{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
-  .brand{display:flex;align-items:center;gap:12px;}
+  .top-inner{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;position:relative;}
+  .brand{display:flex;align-items:center;justify-content:center;gap:12px;}
   .brand-mark{flex-shrink:0;}
   .logo-icon-dark{display:none;}
   [data-theme="dark"] .logo-icon-light{display:none;}
@@ -112,13 +112,53 @@
   .site-footer p{
     font-family:'Space Grotesk',var(--font-body);
   }
-  .brand p{
-    margin:4px 0 0;
+  .brand-tagline{
+    margin:0;
     color:var(--navy);
     font-size:13.5px;
     max-width:52ch;
     font-weight:400;
   }
+  .header-account-area{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:4px;
+  }
+  .account-chip{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:var(--surface-alt);
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    padding:6px 14px 6px 8px;
+    cursor:pointer;
+    color:var(--navy);
+    font-size:13px;
+    font-weight:600;
+  }
+  .account-chip:hover{border-color:var(--slate);}
+  .account-chip-avatar{
+    width:22px;height:22px;border-radius:50%;
+    background:var(--navy);color:var(--ghost);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .settings-back-btn{
+    background:none;
+    border:none;
+    padding:0;
+    margin-bottom:14px;
+    color:var(--slate);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    display:inline-block;
+  }
+  .settings-back-btn:hover{color:var(--navy);text-decoration:underline;}
   .save-status{
     font-size:11px;
     letter-spacing:.06em;
@@ -810,15 +850,10 @@
       </span>
       <div>
         <h1>Virtualist</h1>
-        <p>Biblioteca pessoal com mangás, manhwas, manhuas, danmeis, light novels, visual novels, livros, animes, doramas, séries, filmes e jogos, tudo num só lugar.</p>
       </div>
     </div>
-    <form id="headerSearchForm" autocomplete="off" onsubmit="return false;" style="flex:1;min-width:160px;max-width:360px;">
-      <input type="search" id="headerSearchInput" placeholder="Buscar na minha biblioteca..." autocomplete="off" style="width:100%;padding:9px 12px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface-alt);color:var(--navy);font-size:13px;">
-    </form>
-    <div style="display:flex;align-items:center;gap:14px;">
-      <span class="status-chip" id="accountBadge" style="display:none;"></span>
-      <button class="btn btn-ghost btn-sm" id="themeToggle" type="button">Modo escuro</button>
+    <p class="brand-tagline">Biblioteca pessoal com mangás, manhwas, manhuas, danmeis, light novels, visual novels, livros, animes, doramas, séries, filmes e jogos, tudo num só lugar.</p>
+    <div class="header-account-area">
       <div class="notif-wrap">
         <button class="icon-btn" id="btnOpenNotifications" type="button" title="Notificações" aria-label="Notificações">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -829,10 +864,16 @@
           <div id="notifPanelBody"></div>
         </div>
       </div>
+      <button class="btn btn-ghost btn-sm" id="themeToggle" type="button">Modo escuro</button>
       <button class="icon-btn" id="btnOpenSettings" type="button" title="Configurações" aria-label="Configurações">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
-      <div class="save-status" id="saveStatus"><span class="save-dot"></span><span id="saveStatusText">carregando</span></div>
+      <button class="account-chip" id="accountChip" type="button">
+        <span class="account-chip-avatar" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+        </span>
+        <span id="accountChipLabel">Entrar</span>
+      </button>
     </div>
   </div>
   <div class="app-shell" style="padding:0;">
@@ -845,27 +886,29 @@
   </div>
 </header>
 
+<div class="app-shell" style="padding-bottom:0;padding-top:26px;">
+  <div class="hero-search" id="globalHeroSearch">
+    <h2>Buscar e adicionar</h2>
+    <p>Digite um título de mangá, anime ou livro. A capa, o título original, o link, os gêneros, o status da obra e autor/artista vêm sozinhos.</p>
+    <form id="heroSearchForm" autocomplete="off" onsubmit="return false;">
+      <input type="text" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="off">
+      <input type="password" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
+      <div class="hero-search-row">
+        <select id="heroSearchTypeFilter"></select>
+        <input type="search" id="heroSearchInput" placeholder="Digite um título..." autocomplete="off" name="virtualist-hero-search" data-lpignore="true" data-1p-ignore>
+      </div>
+    </form>
+    <div id="heroSearchResults"></div>
+    <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para jogo, adicione manualmente pela Biblioteca por enquanto.</p>
+  </div>
+</div>
+
 <div class="app-shell">
   <main>
     <div class="banner" id="offlineBanner">Este app está sendo aberto fora do Claude.ai, então os dados locais não são salvos automaticamente entre sessões. Configure a conta na aba Conta para salvar na nuvem, ou exporte um backup em JSON com frequência.</div>
 
     <!-- DASHBOARD -->
     <section class="view active" id="view-dashboard">
-      <div class="hero-search">
-        <h2>Buscar e adicionar</h2>
-        <p>Digite um título de mangá, anime ou livro. A capa, o título original, o link, os gêneros, o status da obra e autor/artista vêm sozinhos.</p>
-        <form id="heroSearchForm" autocomplete="off" onsubmit="return false;">
-          <input type="text" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="off">
-          <input type="password" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
-          <div class="hero-search-row">
-            <input type="search" id="heroSearchInput" placeholder="Digite um título..." autocomplete="off" name="virtualist-hero-search" data-lpignore="true" data-1p-ignore>
-            <select id="heroSearchTypeFilter"></select>
-          </div>
-        </form>
-        <div id="heroSearchResults"></div>
-        <p class="hint" id="heroSearchHint">Busca automática disponível para mangá, manhwa, manhua, danmei, light novel, webtoon, anime e livro. Para jogo, adicione manualmente pela Biblioteca por enquanto.</p>
-      </div>
-
       <div class="stat-row" id="statRow"></div>
 
       <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
@@ -1017,7 +1060,9 @@
       </div>
 
       <div class="settings-panel panel" id="panel-profile" style="display:none;">
+        <button type="button" class="settings-back-btn" data-back>← Voltar</button>
         <h3>Perfil e conta</h3>
+        <div class="save-status" id="saveStatus" style="margin-bottom:16px;"><span class="save-dot"></span><span id="saveStatusText">carregando</span></div>
         <div id="profileLoggedOut">
           <p>Você está usando o Virtualist sem conta na nuvem neste navegador.</p>
           <div class="panel-actions">
@@ -1038,6 +1083,7 @@
       </div>
 
       <div class="settings-panel" id="panel-connection" style="display:none;">
+        <button type="button" class="settings-back-btn" data-back>← Voltar</button>
         <div class="panel" id="supabaseSetupPanel">
           <h3>Conectar ao Supabase</h3>
           <div id="supabaseConfigSummary" style="display:none;">
@@ -1111,6 +1157,7 @@
       </div>
 
       <div class="settings-panel panel" id="panel-public-profile" style="display:none;">
+        <button type="button" class="settings-back-btn" data-back>← Voltar</button>
         <h3>Perfil público ou privado</h3>
         <p>Preencha o que quiser mostrar. Se você não marcar "Perfil público" abaixo, seu perfil permanece privado, visível só para você.</p>
         <div class="field"><label>Nome de exibição</label><input type="text" id="profileDisplayName" placeholder="Como você quer aparecer"></div>
@@ -1138,6 +1185,7 @@
       </div>
 
       <div class="settings-panel panel" id="panel-danger" style="display:none;border-color:var(--black);">
+        <button type="button" class="settings-back-btn" data-back>← Voltar</button>
         <h3>Apagar tudo</h3>
         <p>Remove todos os itens do seu acervo de forma permanente. Exporte um backup antes, se quiser manter os dados.</p>
         <div class="panel-actions">
@@ -2966,13 +3014,6 @@ document.getElementById('filterStatus').addEventListener('change', function(ev){
 document.getElementById('filterGenre').addEventListener('change', function(ev){ state.filters.genre = ev.target.value; renderLibrary(); });
 document.getElementById('sortSelect').addEventListener('change', function(ev){ state.filters.sort = ev.target.value; renderLibrary(); });
 
-document.getElementById('headerSearchInput').addEventListener('input', debounce(function(ev){
-  const q = ev.target.value;
-  state.filters.search = q;
-  document.getElementById('searchInput').value = q;
-  document.querySelector('nav.tabs button[data-view="library"]').click();
-}, 250));
-
 function debounce(fn, ms){
   let t;
   return function(){
@@ -3952,19 +3993,23 @@ document.getElementById('brandMarkClickTarget').addEventListener('click', handle
 document.getElementById('gateBrandClickTarget').addEventListener('click', handleBrandClick);
 
 function updateAccountBadge(){
-  const badge = document.getElementById('accountBadge');
+  const label = document.getElementById('accountChipLabel');
+  const chip = document.getElementById('accountChip');
   if(supaUser){
-    badge.style.display = '';
-    badge.textContent = 'Conectada como ' + supaUser.email;
-    badge.style.background = 'var(--status-active-bg)';
-    badge.style.color = 'var(--status-active-fg)';
-    badge.style.cursor = 'pointer';
-    badge.title = 'Ver meu perfil';
+    label.textContent = supaUser.email;
+    chip.title = 'Ver meu perfil';
   } else {
-    badge.style.display = 'none';
+    label.textContent = 'Entrar';
+    chip.title = 'Entrar ou criar conta';
   }
 }
-document.getElementById('accountBadge').addEventListener('click', openOwnProfile);
+document.getElementById('accountChip').addEventListener('click', function(){
+  if(supaUser){
+    openOwnProfile();
+  } else {
+    document.getElementById('authGate').style.display = 'flex';
+  }
+});
 
 document.getElementById('btnEditSupabaseConfig').addEventListener('click', function(){
   configFormExpanded = true;
@@ -4055,13 +4100,28 @@ document.getElementById('btnChangePassword').addEventListener('click', async fun
   }catch(e){ toast('Não consegui atualizar a senha agora.', true); }
 });
 
-/* settings hub: cards abrem/fecham os painéis correspondentes */
+/* settings hub: cards abrem/fecham os painéis correspondentes, um de cada vez */
+function closeAllSettingsPanels(){
+  document.querySelectorAll('.settings-panel').forEach(function(p){ p.style.display = 'none'; });
+  document.querySelectorAll('.settings-card[data-target]').forEach(function(c){ c.classList.remove('open'); });
+}
 document.querySelectorAll('.settings-card[data-target]').forEach(function(card){
   card.addEventListener('click', function(){
     const panel = document.getElementById(card.dataset.target);
     const isOpen = panel.style.display !== 'none';
-    panel.style.display = isOpen ? 'none' : '';
-    card.classList.toggle('open', !isOpen);
+    closeAllSettingsPanels();
+    if(!isOpen){
+      panel.style.display = '';
+      card.classList.add('open');
+      panel.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+document.querySelectorAll('.settings-back-btn[data-back]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    closeAllSettingsPanels();
+    const menu = document.querySelector('.settings-menu');
+    if(menu) menu.scrollIntoView({behavior:'smooth', block:'start'});
   });
 });
 document.getElementById('btnJumpImport').addEventListener('click', function(){
@@ -4119,9 +4179,11 @@ document.getElementById('themeToggle').addEventListener('click', async function(
 async function init(){
   const publicSlug = new URLSearchParams(window.location.search).get('u');
   if(publicSlug){
+    history.replaceState({virtualistView:'profile', slug: publicSlug}, '', window.location.href);
     await renderPublicProfilePage(publicSlug);
     return;
   }
+  history.replaceState({virtualistView:'main'}, '', window.location.pathname);
   currentTheme = await loadTheme();
   applyTheme(currentTheme);
   state.viewMode = await loadViewMode();
@@ -4162,6 +4224,14 @@ async function init(){
 init();
 
 /* ---------------- public profile page ---------------- */
+function showMainApp(){
+  document.getElementById('mainApp').style.display = '';
+  document.getElementById('publicProfileView').style.display = 'none';
+}
+async function navigateToPublicProfile(slug){
+  history.pushState({virtualistView:'profile', slug: slug}, '', window.location.origin + '/?u=' + slug);
+  await renderPublicProfilePage(slug);
+}
 async function renderPublicProfilePage(slug){
   document.getElementById('mainApp').style.display = 'none';
   document.getElementById('publicProfileView').style.display = 'block';
@@ -4184,8 +4254,7 @@ async function renderPublicProfilePage(slug){
     content.innerHTML = '<div class="empty-note">Não consegui carregar esse perfil agora. Tente de novo em instantes.</div>';
   }
 }
-function openOwnProfile(){
-  if(!supaUser){ toast('Entre com sua conta para ver seu perfil.', true); return; }
+function renderOwnProfileContent(){
   document.getElementById('mainApp').style.display = 'none';
   document.getElementById('publicProfileView').style.display = 'block';
   const content = document.getElementById('publicProfileContent');
@@ -4196,11 +4265,30 @@ function openOwnProfile(){
     : '<p class="hint" style="margin:10px 0 0;">Seu perfil está privado, só você consegue ver esta página. Ative "Perfil público" nas Configurações para compartilhar com outras pessoas.</p>';
   renderProfileIntoContent(content, profile, state.entries, shareUrl, notice, null);
 }
+function openOwnProfile(){
+  if(!supaUser){ toast('Entre com sua conta para ver seu perfil.', true); return; }
+  history.pushState({virtualistView:'profile', own:true}, '', window.location.origin + window.location.pathname);
+  renderOwnProfileContent();
+}
 document.getElementById('publicViewBackLink').addEventListener('click', function(ev){
   if(appInitialized){
     ev.preventDefault();
-    document.getElementById('publicProfileView').style.display = 'none';
-    document.getElementById('mainApp').style.display = '';
+    if(history.state && history.state.virtualistView === 'profile'){
+      history.back();
+    } else {
+      history.pushState({virtualistView:'main'}, '', window.location.origin + window.location.pathname);
+      showMainApp();
+    }
+  }
+});
+window.addEventListener('popstate', function(ev){
+  const st = ev.state;
+  if(!appInitialized) return;
+  if(!st || st.virtualistView === 'main'){
+    showMainApp();
+  } else if(st.virtualistView === 'profile'){
+    if(st.own){ renderOwnProfileContent(); }
+    else if(st.slug){ renderPublicProfilePage(st.slug); }
   }
 });
 async function renderProfileIntoContent(content, profile, entries, shareUrl, extraNoticeHtml, followUserId){
@@ -4355,9 +4443,10 @@ function renderNotifBadgeAndPanel(){
       const u = state.updates[idx];
       state.updates = state.updates.filter(function(x, i){ return i !== idx; });
       renderNotifBadgeAndPanel();
+      saveNotifUpdates();
       closeNotifPanel();
       if(u.followSlug){
-        window.location.href = window.location.origin + '/?u=' + u.followSlug;
+        navigateToPublicProfile(u.followSlug);
         return;
       }
       switchToView('library');
@@ -4365,6 +4454,9 @@ function renderNotifBadgeAndPanel(){
       openEntryModal(u.entryId);
     });
   });
+}
+async function saveNotifUpdates(){
+  try{ await appStorage.set('virtualist:notif-updates', JSON.stringify(state.updates)); }catch(e){}
 }
 async function fetchAniListTotals(refId, isAnime){
   const query = 'query($id:Int){ Media(id:$id, type:'+(isAnime?'ANIME':'MANGA')+'){ chapters episodes } }';
@@ -4422,6 +4514,10 @@ async function checkFollowedUpdates(){
 }
 async function checkForUpdates(){
   try{
+    try{
+      const cached = await appStorage.get('virtualist:notif-updates');
+      if(cached) state.updates = JSON.parse(cached);
+    }catch(e){}
     const lastCheck = await appStorage.get('virtualist:last-update-check');
     if(lastCheck && (Date.now() - Number(lastCheck)) < 12*60*60*1000) return renderNotifBadgeAndPanel();
     const candidates = state.entries.filter(function(e){
@@ -4447,6 +4543,7 @@ async function checkForUpdates(){
     const followUpdates = await checkFollowedUpdates();
     state.updates = updates.concat(followUpdates);
     await appStorage.set('virtualist:last-update-check', String(Date.now()));
+    await saveNotifUpdates();
   }catch(e){}
   renderNotifBadgeAndPanel();
 }
